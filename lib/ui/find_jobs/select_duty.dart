@@ -1,4 +1,6 @@
+import 'dart:convert' as convert;
 import 'dart:ui';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duty/theme.dart';
 import 'package:duty/ui/find_jobs/get_duty.dart';
@@ -35,6 +37,7 @@ class _FindDutyState extends State<FindDuty> {
           }
         }
       });
+
     super.initState();
   }
 
@@ -53,23 +56,17 @@ class _FindDutyState extends State<FindDuty> {
     print(locationAddress.toString());
 
     return Scaffold(
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection("duty")
-              .doc(locationAddress["country"]!)
-              .collection(locationAddress["city"]!)
-              .doc("active_duties")
-              .collection("task")
-              .limit(_perPage)
-              .snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      body: FutureBuilder(
+          future: http.get(Uri.parse('https://hello.loca.lt/duty/getDuty')),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              data = snapshot.data!.docs;
+              data = snapshot.data.result;
               return ListView.builder(
                   controller: _chatScrollController,
-                  itemCount: data.length,
+                  itemCount: 1,
                   itemBuilder: (context, i) {
-                    return Padding(
+                    return Text(data.toString());
+                    /*Padding(
                       padding: const EdgeInsets.only(right: 5.0),
                       child: InkWell(
                           onTap: () {
@@ -137,7 +134,7 @@ class _FindDutyState extends State<FindDuty> {
                                               ),
                                               SizedBox(width: 1),
                                               Flexible(
-                                                child: Text("Payment: " + data[i]['payment'] +"/-",
+                                                child: Text("Payment: " + data[i]['payment'] + "/-",
                                                     style: TextStyle(fontSize: 15.0)),
                                               ),
                                             ],
@@ -157,7 +154,7 @@ class _FindDutyState extends State<FindDuty> {
                                   )),
                             ],
                           )),
-                    );
+                    );*/
                   });
             } else
               return Center(child: CircularProgressIndicator());
