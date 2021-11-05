@@ -28,8 +28,8 @@ class GoogleAddressProvider extends ChangeNotifier {
 
   getCurrentAddress() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-    print(position);
     getCoordinatesFromPosition(Coordinates(position.latitude, position.longitude));
+    //print(position.toString());
     notifyListeners();
   }
 

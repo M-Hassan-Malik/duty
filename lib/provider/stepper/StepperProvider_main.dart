@@ -100,6 +100,7 @@ class DataHolder {
     "city": "",
     "country": "",
     "date": "",
+    "createdOn": "",
     "person": 0,
     "payment": 0,
     "done": 0,

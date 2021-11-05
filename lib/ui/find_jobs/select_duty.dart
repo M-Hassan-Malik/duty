@@ -1,7 +1,5 @@
 import 'dart:convert' as convert;
-import 'dart:ui';
 import 'package:http/http.dart' as http;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duty/theme.dart';
 import 'package:duty/ui/find_jobs/get_duty.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +16,7 @@ class FindDuty extends StatefulWidget {
 
 class _FindDutyState extends State<FindDuty> {
   late ScrollController _chatScrollController;
-  int _perPage = 10,
-      _increment = 10;
+  int _perPage = 10, _increment = 10;
   String userCurrent = "";
   var data, locationAddress;
 
@@ -47,6 +44,18 @@ class _FindDutyState extends State<FindDuty> {
     super.dispose();
   }
 
+  Future _getDuties() async {
+    try {
+      var response = await http.get(Uri.parse('https://hello.loca.lt/duty/getDuty'));
+      if (response.statusCode == 200) {
+        var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
+        return result;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Provider.of<GoogleAddressProvider>(context, listen: false).getCurrentAddress();
@@ -57,16 +66,15 @@ class _FindDutyState extends State<FindDuty> {
 
     return Scaffold(
       body: FutureBuilder(
-          future: http.get(Uri.parse('https://hello.loca.lt/duty/getDuty')),
+          future: _getDuties(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              data = snapshot.data.result;
+            if (!snapshot.hasError) {
+              data = snapshot.data['result'];
               return ListView.builder(
                   controller: _chatScrollController,
                   itemCount: 1,
                   itemBuilder: (context, i) {
-                    return Text(data.toString());
-                    /*Padding(
+                    return Padding(
                       padding: const EdgeInsets.only(right: 5.0),
                       child: InkWell(
                           onTap: () {
@@ -79,11 +87,7 @@ class _FindDutyState extends State<FindDuty> {
                               Align(
                                 alignment: Alignment.topRight,
                                 child: Container(
-
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width * 0.8,
+                                  width: MediaQuery.of(context).size.width * 0.8,
                                   decoration: BoxDecoration(
                                     color: myTertiaryColor,
                                     borderRadius: BorderRadius.circular(10.0),
@@ -102,15 +106,18 @@ class _FindDutyState extends State<FindDuty> {
                                       children: <Widget>[
                                         Center(
                                             child: Text(
-                                              data[i]['title'],
-                                              style:
-                                              TextStyle(overflow: TextOverflow.ellipsis,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: myPrimaryColor),
-                                            )),
+                                          data[i]['title'],
+                                          style: TextStyle(
+                                              overflow: TextOverflow.ellipsis,
+                                              fontWeight: FontWeight.bold,
+                                              color: myPrimaryColor),
+                                        )),
                                         Row(
                                           children: [
-                                            Icon(Icons.location_on, color: Colors.red,),
+                                            Icon(
+                                              Icons.location_on,
+                                              color: Colors.red,
+                                            ),
                                             Container(
                                                 width: 190,
                                                 child: Text(
@@ -154,7 +161,7 @@ class _FindDutyState extends State<FindDuty> {
                                   )),
                             ],
                           )),
-                    );*/
+                    );
                   });
             } else
               return Center(child: CircularProgressIndicator());
