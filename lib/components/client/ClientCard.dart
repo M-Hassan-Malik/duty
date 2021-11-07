@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duty/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -62,12 +63,12 @@ Container getClientCard(BuildContext context, dynamic userData) {
   }
 
   String getTimePassed() {
-    DateTime timestampToDateTime = DateTime.parse(userData['createdOn'].toDate().toString());
+    DateTime timestampToDateTime = DateTime.fromMillisecondsSinceEpoch(userData['createdOn']['_seconds'] * 1000);
     DateTime from = timestampToDateTime;
     DateTime to = DateTime.now();
 
     int time = (to.difference(from).inHours);
-    if (time < 24) {
+    if (time < 24 && time > 0) {
       return time > 1 ? time.toString() + " hours ago" : time.toString() + " hour ago";
     } else {
       return (to.difference(from).inDays) > 23
@@ -174,8 +175,9 @@ Container getClientCard(BuildContext context, dynamic userData) {
               style: TextStyle(color: myPrimaryColor, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
+
             Text(
-              DateTime.parse(userData['date'].toDate().toString()).toString().split(" ").first,
+              DateTime.fromMillisecondsSinceEpoch(userData['date']['_seconds'] * 1000).toString().split(" ").first,
               style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             )

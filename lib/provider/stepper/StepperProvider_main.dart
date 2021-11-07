@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duty/provider/GoogleAddressProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -74,8 +73,8 @@ class StepperProviderContinuity extends ChangeNotifier {
     } else {
       _complete = true;
       addTask(context);
-      //_currentStep = 0; // When next time new post is add so it will start from 0'th Step.
-      //Navigator.pop(context); // go to main screen
+      _currentStep = 0; // When next time new post is add so it will start from 0'th Step.
+      Navigator.pop(context); // go to main screen
     }
     notifyListeners();
   }

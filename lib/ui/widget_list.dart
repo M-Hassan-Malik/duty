@@ -8,7 +8,7 @@ Widget? getCurrentScreen(int index) {
   switch (index) {
     case 0:
       {
-        return PostDuty();
+        return FindDuty();
       }
     case 1:
       {
@@ -16,7 +16,7 @@ Widget? getCurrentScreen(int index) {
       }
     case 2:
       {
-        return FindDuty();
+        return PostDuty();
       }
     case 3:
       {

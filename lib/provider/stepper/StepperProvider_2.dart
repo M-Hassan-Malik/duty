@@ -6,7 +6,7 @@ import 'package:geocoder/geocoder.dart';
 class StepperProviderLocation extends ChangeNotifier {
 
   String? _address;
-  late Position _position;
+  var _position;
   bool updateAddress = false;
 
   Position get position => _position;

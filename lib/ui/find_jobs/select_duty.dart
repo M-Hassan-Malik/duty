@@ -50,9 +50,12 @@ class _FindDutyState extends State<FindDuty> {
       if (response.statusCode == 200) {
         var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
         return result;
+      } else if (response.statusCode == 400) {
+        return null;
       }
     } catch (e) {
-      print(e);
+      print("try caught: $e");
+      return null;
     }
   }
 
@@ -62,24 +65,23 @@ class _FindDutyState extends State<FindDuty> {
     locationAddress = Provider.of<GoogleAddressProvider>(context, listen: false).getFullAddress()!;
 
     userCurrent = FirebaseAuth.instance.currentUser!.uid;
-    print(locationAddress.toString());
 
     return Scaffold(
       body: FutureBuilder(
           future: _getDuties(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasError) {
+            if (!snapshot.hasError && snapshot.data != null) {
               data = snapshot.data['result'];
               return ListView.builder(
                   controller: _chatScrollController,
-                  itemCount: 1,
+                  itemCount: data.length,
                   itemBuilder: (context, i) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 5.0),
                       child: InkWell(
                           onTap: () {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => GetFullDetailsOfDuty(doc: data[i])));
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => GetFullDetailsOfDuty(doc: data[i]['duty'])));
                           },
                           child: Stack(
                             alignment: Alignment.center,
@@ -106,7 +108,7 @@ class _FindDutyState extends State<FindDuty> {
                                       children: <Widget>[
                                         Center(
                                             child: Text(
-                                          data[i]['title'],
+                                          data[i]['duty']['title'],
                                           style: TextStyle(
                                               overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight.bold,
@@ -121,7 +123,7 @@ class _FindDutyState extends State<FindDuty> {
                                             Container(
                                                 width: 190,
                                                 child: Text(
-                                                  data[i]['address'],
+                                                  data[i]['duty']['address'],
                                                   style: TextStyle(overflow: TextOverflow.ellipsis),
                                                 )),
                                           ],
@@ -141,7 +143,7 @@ class _FindDutyState extends State<FindDuty> {
                                               ),
                                               SizedBox(width: 1),
                                               Flexible(
-                                                child: Text("Payment: " + data[i]['payment'] + "/-",
+                                                child: Text("Payment: " + data[i]['duty']['payment'] + "/-",
                                                     style: TextStyle(fontSize: 15.0)),
                                               ),
                                             ],
