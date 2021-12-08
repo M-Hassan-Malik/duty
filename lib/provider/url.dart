@@ -1,0 +1,1 @@
+final String url = "https://newoneder.loca.lt";

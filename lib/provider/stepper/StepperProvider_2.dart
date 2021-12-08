@@ -12,7 +12,7 @@ class StepperProviderLocation extends ChangeNotifier {
   Position get position => _position;
 
   String getAddress() {
-    if (_address == null ) {
+    if (_address == null) {
       return "Couldn't find the address, tap button again";
     } else {
       DataHolder.dataHolder["address"] = _address;

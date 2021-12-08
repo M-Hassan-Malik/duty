@@ -18,7 +18,7 @@ class _FindDutyState extends State<FindDuty> {
   late ScrollController _chatScrollController;
   int _perPage = 10, _increment = 10;
   String userCurrent = "";
-  var data, locationAddress;
+  var data;
 
   void initState() {
     _chatScrollController = ScrollController()
@@ -46,7 +46,7 @@ class _FindDutyState extends State<FindDuty> {
 
   Future _getDuties() async {
     try {
-      var response = await http.get(Uri.parse('https://hello.loca.lt/duty/getDuty'));
+      var response = await http.get(Uri.parse('https://newoneder.loca.lt/duty/getDuty'));
       if (response.statusCode == 200) {
         var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
         return result;
@@ -61,9 +61,6 @@ class _FindDutyState extends State<FindDuty> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<GoogleAddressProvider>(context, listen: false).getCurrentAddress();
-    locationAddress = Provider.of<GoogleAddressProvider>(context, listen: false).getFullAddress()!;
-
     userCurrent = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
@@ -81,7 +78,7 @@ class _FindDutyState extends State<FindDuty> {
                       child: InkWell(
                           onTap: () {
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => GetFullDetailsOfDuty(doc: data[i]['duty'])));
+                                MaterialPageRoute(builder: (context) => GetFullDetailsOfDuty(doc: data[i]['docData'],docId: data[i]['docId'] )));
                           },
                           child: Stack(
                             alignment: Alignment.center,
@@ -108,7 +105,7 @@ class _FindDutyState extends State<FindDuty> {
                                       children: <Widget>[
                                         Center(
                                             child: Text(
-                                          data[i]['duty']['title'],
+                                          data[i]['docData']['duty']['title'],
                                           style: TextStyle(
                                               overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight.bold,
@@ -123,7 +120,7 @@ class _FindDutyState extends State<FindDuty> {
                                             Container(
                                                 width: 190,
                                                 child: Text(
-                                                  data[i]['duty']['address'],
+                                                  data[i]['docData']['duty']['address'],
                                                   style: TextStyle(overflow: TextOverflow.ellipsis),
                                                 )),
                                           ],
@@ -143,7 +140,7 @@ class _FindDutyState extends State<FindDuty> {
                                               ),
                                               SizedBox(width: 1),
                                               Flexible(
-                                                child: Text("Payment: " + data[i]['duty']['payment'] + "/-",
+                                                child: Text("Payment: " + data[i]['docData']['duty']['payment'] + "/-",
                                                     style: TextStyle(fontSize: 15.0)),
                                               ),
                                             ],

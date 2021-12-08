@@ -3,20 +3,19 @@ import 'package:duty/theme.dart';
 import 'package:flutter/material.dart';
 
 class GetFullDetailsOfDuty extends StatelessWidget {
-  final doc;
+  final doc, docId;
 
-  const GetFullDetailsOfDuty({Key? key, required this.doc}) : super(key: key);
+  const GetFullDetailsOfDuty({Key? key, required this.doc, required this.docId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0))),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0))),
         backgroundColor: myPrimaryColor,
         foregroundColor: mySecondaryColor,
-        title: Text(doc['title']),
+        title: Text(docId),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -25,11 +24,11 @@ class GetFullDetailsOfDuty extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                getFirstRow(doc),
+                getFirstRow(doc['duty']),
                 SizedBox(height: 20.0),
-                getClientCard(context, doc),
+                getClientCard(context, doc['duty']),
                 SizedBox(height: 15.0),
-                getMakeOfferCard(context, doc),
+                getMakeOfferCard(context, doc, docId),
                 SizedBox(height: 10.0),
                 Divider(
                   color: myTertiaryColor,
@@ -43,12 +42,11 @@ class GetFullDetailsOfDuty extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10),
-                getDutyDetails(context, doc),
+                getDutyDetails(context, doc['duty']),
                 SizedBox(height: 10),
-                getOffers(context, doc),
+                getOffers(context, doc['duty']),
                 SizedBox(height: 10),
-                //getComments(context, doc)
-
+                getComments(context, doc['duty'])
               ],
             ),
           ),

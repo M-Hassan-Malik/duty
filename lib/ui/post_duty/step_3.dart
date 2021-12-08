@@ -9,13 +9,19 @@ class StepperProviderBilling extends StatelessWidget {
   final _peopleController = TextEditingController();
   final _paymentController = TextEditingController();
 
-  finalize(BuildContext context) => _paymentController.text.isNotEmpty && _peopleController.text.isNotEmpty
-      ? {
-          DataHolder.dataHolder["person"] = _peopleController.text,
-          DataHolder.dataHolder["payment"] =  _paymentController.text,
-          Provider.of<StepperProviderContinuity>(context, listen: false).setContinuityTrue(),
-        }
-      : print("false 3rd step");
+  finalize(BuildContext context) {
+    _peopleController.text.isNotEmpty && _paymentController.text.isNotEmpty
+        ? {
+      (int.parse(_paymentController.text) > 100 && int.parse(_peopleController.text) > 0)
+          ? {
+        DataHolder.dataHolder["person"] = int.parse(_peopleController.text),
+        DataHolder.dataHolder["payment"] = int.parse(_paymentController.text),
+        Provider.of<StepperProviderContinuity>(context).setContinuityTrue()
+      } : print('values not valid')
+    }
+        : print("false 3rd step"
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

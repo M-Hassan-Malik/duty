@@ -1,3 +1,4 @@
+import 'package:duty/components/client/comment.dart';
 import 'package:duty/components/registration/OTP.dart';
 import 'package:duty/components/registration/registration_area.dart';
 import 'package:duty/theme.dart';
@@ -47,6 +48,7 @@ class MyHomePage extends StatelessWidget {
       child: (Scaffold(
         backgroundColor: mySecondaryColor,
         body: LoggingPage(),
+        //body: Comment(uid: 'fFLzPABNDAT0v2KZrif6ot1ObPy2')
       )),
     );
   }

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:duty/components/client/comment.dart';
+import 'package:duty/components/client/makeOffer.dart';
 import 'package:duty/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -175,7 +177,6 @@ Container getClientCard(BuildContext context, dynamic userData) {
               style: TextStyle(color: myPrimaryColor, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-
             Text(
               DateTime.fromMillisecondsSinceEpoch(userData['date']['_seconds'] * 1000).toString().split(" ").first,
               style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
@@ -188,7 +189,7 @@ Container getClientCard(BuildContext context, dynamic userData) {
   );
 }
 
-Container getMakeOfferCard(BuildContext context, dynamic userData) {
+Container getMakeOfferCard(BuildContext context, dynamic userData, String docId) {
   return Container(
       height: MediaQuery.of(context).size.height * 0.2,
       width: MediaQuery.of(context).size.width,
@@ -202,7 +203,7 @@ Container getMakeOfferCard(BuildContext context, dynamic userData) {
                 textAlign: TextAlign.center,
                 text: TextSpan(text: 'Offered Duty Budget\n', children: <TextSpan>[
                   TextSpan(
-                      text: userData['payment'],
+                      text: userData['duty']['payment'],
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
@@ -216,7 +217,16 @@ Container getMakeOfferCard(BuildContext context, dynamic userData) {
             ElevatedButton(
               style: ElevatedButton.styleFrom(primary: mySecondaryColor),
               child: Text("Make your offer?", style: TextStyle(color: myPrimaryColor)),
-              onPressed: () => {print("clicked Offer")},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => makeOffer(
+                            userData: userData,
+                            docId: docId,
+                          )),
+                );
+              },
             ),
           ],
         ),
@@ -346,16 +356,7 @@ Widget getOffers(BuildContext context, dynamic userData) {
   );
 }
 
-Widget getComments(BuildContext context, dynamic userData) {
+Container getComments(BuildContext context, dynamic userData) {
   TextEditingController controller = new TextEditingController();
-  return Container(
-    child: ExpansionTile(
-      title: Text("View Comments"),
-      children: [
-        Column(
-          children: [],
-        )
-      ],
-    ),
-  );
+  return Container(child: ExpansionTile(title: Text("View Comments"), children: [Comment(uid: userData['uid'])]));
 }
