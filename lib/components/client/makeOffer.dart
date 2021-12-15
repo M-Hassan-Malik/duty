@@ -67,7 +67,7 @@ class _makeOfferState extends State<makeOffer> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           http
-                              .post(Uri.parse('https://hello.loca.lt/duty/addOffer'),
+                              .post(Uri.parse('https://newoneder.loca.lt/duty/addOffer'),
                               headers: <String, String>{
                                 'Content-Type': 'application/json; charset=UTF-8',
                               },

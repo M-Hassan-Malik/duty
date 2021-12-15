@@ -15,7 +15,7 @@ class StepForm extends StatefulWidget {
 class _StepFormState extends State<StepForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String title="",description="";
+  String title = "", description = "";
 
   @override
   Widget build(BuildContext context) {
@@ -24,38 +24,46 @@ class _StepFormState extends State<StepForm> {
         child: Column(
           children: [
             TextFormField(
-              minLines: 1, maxLines: 2,
+                minLines: 1,
+                maxLines: 2,
                 readOnly: true,
                 initialValue: widget.name,
+                onChanged: (text) {
+                  _validateForm(_formKey, context);
+                },
                 validator: (value) {
-                  if (value == null || value.isEmpty && value.length < 3 ) {
+                  if (value!.isEmpty || value.length < 3) {
                     return "Title should be at least 3 characters";
                   }
-                  title= value;
+                  DataHolder.dataHolder["title"] = value;
                   return null;
                 }),
             TextFormField(
                 minLines: 1,
                 maxLines: 20,
+                onChanged: (text) {
+                  _validateForm(_formKey, context);
+                },
                 validator: (value) {
-                  if (value == null || value.isEmpty && value.length < 30 ) {
-                      return "Write at least 30 characters about";
+                  if (value!.isEmpty || value.length < 30) {
+                    return "Write at least 30 characters about";
                   }
-                  description = value;
+                  DataHolder.dataHolder["description"] = value;
                   return null;
                 },
-                decoration: InputDecoration(hintText: "Add Description",
+                decoration: InputDecoration(
+                  hintText: "Add Description",
                 )),
-            TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Provider.of<StepperProviderContinuity>(context, listen: false).setContinuityTrue();
-                    DataHolder.dataHolder["title"] = title;
-                    DataHolder.dataHolder["description"] = description;
-                  }
-                },
-                child: Text("Validate Form"))
           ],
         ));
   }
+}
+
+_validateForm(formKey, BuildContext context) {
+  if (formKey.currentState!.validate()) {
+    Provider.of<StepperProviderContinuity>(context, listen: false).setContinuityTrue();
+  } else
+    Provider.of<StepperProviderContinuity>(context, listen: false).getContinuityValidation
+        ? Provider.of<StepperProviderContinuity>(context, listen: false).setContinuityFalse()
+        : "";
 }

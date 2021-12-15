@@ -1,3 +1,4 @@
+import 'package:duty/components/storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
@@ -12,32 +13,30 @@ class GoogleSignInProvider extends ChangeNotifier {
 
   GoogleSignInAccount get user => _user!;
 
-  Future googleLogin() async {
+  Future googleLogin(BuildContext context) async {
     try {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return;
       _user = googleUser;
-
       final googleAuth = await googleUser.authentication;
 
       final credentials =
           GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-
-      await FirebaseAuth.instance.signInWithCredential(credentials);
+      var googleUserInfo = await FirebaseAuth.instance.signInWithCredential(credentials);
+      googleUserInfo.user != null ? UserStorage.storeGoogleUser(googleUserInfo.user?.uid,context) : "";
     } catch (e) {
-      print(e.toString());
+      print("google sign in catch-> ${e.toString()}");
     }
     notifyListeners();
   }
 
   Future googleLogout() async {
+    UserStorage.removeGoogleUser();
     await googleSignIn.disconnect();
     FirebaseAuth.instance.signOut();
     notifyListeners();
   }
-}
-
-// Class ends
+} // Class endsc
 
 class OTPProvider extends ChangeNotifier {
   bool clickedOTP = false;
@@ -104,6 +103,7 @@ class FirebaseAuthenticationProvider {
   } //
 
   Future<void> signOut() async {
+    UserStorage.removeGoogleUser();
     await _auth.signOut();
   }
 }

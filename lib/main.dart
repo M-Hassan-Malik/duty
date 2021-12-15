@@ -30,7 +30,7 @@ Future main() async {
         '/registrationRoute': (context) => RegistrationTextForm(),
         '/loginRoute': (context) => MyHomePage(),
         '/otpRoute': (context) => OTP(),
-        '/loggingPageRoute': (context) => LoggingPage(),
+        '/loggingPageRoute': (context) => LandingPage(),
       },
       home: MyHomePage(),
     ),
@@ -47,7 +47,7 @@ class MyHomePage extends StatelessWidget {
     return SafeArea(
       child: (Scaffold(
         backgroundColor: mySecondaryColor,
-        body: LoggingPage(),
+        body: LandingPage(),
         //body: Comment(uid: 'fFLzPABNDAT0v2KZrif6ot1ObPy2')
       )),
     );

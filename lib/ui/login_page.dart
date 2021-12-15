@@ -15,7 +15,7 @@ Widget getElevatedButton(Widget logo, String name, BuildContext context) =>
           case "google":
             {
               final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.googleLogin();
+              provider.googleLogin(context);
             }
             break;
           case "facebook":

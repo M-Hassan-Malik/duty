@@ -4,9 +4,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 
 class StepperProviderLocation extends ChangeNotifier {
-
   String? _address;
-  var _position;
+  var first;
+  var _position = null;
   bool updateAddress = false;
 
   Position get position => _position;
@@ -17,6 +17,18 @@ class StepperProviderLocation extends ChangeNotifier {
     } else {
       DataHolder.dataHolder["address"] = _address;
       return _address!;
+    }
+  }
+
+  Map<String, String?>? getFullAddress() {
+    if (first == null) {
+      return {"address": 'not found'};
+    } else {
+      return {
+        "address": first!.addressLine,
+        "city": first!.subAdminArea,
+        "country": first!.countryName,
+      };
     }
   }
 
@@ -31,7 +43,7 @@ class StepperProviderLocation extends ChangeNotifier {
 
   void getCoordinatesFromPosition(Coordinates coordinates) async {
     var address = await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    var first = address.first;
+    first = address.first;
     _address = first.addressLine;
     notifyListeners();
   }

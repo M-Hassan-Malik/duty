@@ -139,7 +139,7 @@ class _RegistrationTextFormState extends State<RegistrationTextForm> {
                                 "password": RegFields.userFields['pass'],
                                 "address": convert.jsonEncode(locationAddress),
                               };
-                              http.post(Uri.parse('https://hello.loca.lt/user/signup'), body: body).then((response) => {
+                              http.post(Uri.parse('https://newoneder.loca.lt/user/signup'), body: body).then((response) => {
                                     if (response.statusCode == 200)
                                       {
                                         jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>,

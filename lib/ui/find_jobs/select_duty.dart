@@ -1,4 +1,5 @@
 import 'dart:convert' as convert;
+import 'package:duty/components/storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:duty/theme.dart';
 import 'package:duty/ui/find_jobs/get_duty.dart';
@@ -61,7 +62,7 @@ class _FindDutyState extends State<FindDuty> {
 
   @override
   Widget build(BuildContext context) {
-    userCurrent = FirebaseAuth.instance.currentUser!.uid;
+    userCurrent = UserStorage.currentUserId;
 
     return Scaffold(
       body: FutureBuilder(
@@ -74,7 +75,7 @@ class _FindDutyState extends State<FindDuty> {
                   itemCount: data.length,
                   itemBuilder: (context, i) {
                     return Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
+                      padding: const EdgeInsets.only(right: 5.0,top: 8.0),
                       child: InkWell(
                           onTap: () {
                             Navigator.push(context,
@@ -140,7 +141,7 @@ class _FindDutyState extends State<FindDuty> {
                                               ),
                                               SizedBox(width: 1),
                                               Flexible(
-                                                child: Text("Payment: " + data[i]['docData']['duty']['payment'] + "/-",
+                                                child: Text("Payment: " + data[i]['docData']['duty']['payment'].toString() + "/-",
                                                     style: TextStyle(fontSize: 15.0)),
                                               ),
                                             ],
