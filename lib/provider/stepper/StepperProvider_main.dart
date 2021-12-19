@@ -1,6 +1,6 @@
 import 'package:duty/components/storage.dart';
 import 'package:duty/provider/stepper/StepperProvider_2.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:duty/provider/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -14,24 +14,30 @@ class StepperProviderContinuity extends ChangeNotifier {
     DataHolder.dataHolder['uid'] = UserStorage.currentUserId;
     DataHolder.dataHolder['city'] = locationAddress['city'];
     DataHolder.dataHolder['country'] = locationAddress['country'];
+    if(locationAddress['city'] != null && locationAddress['country'] != null) {
+      final response = await http.post(Uri.parse('$API_URL/duty/setDuty'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: convert.jsonEncode(DataHolder.dataHolder));
 
-    final response = await http.post(Uri.parse('https://newoneder.loca.lt/duty/setDuty'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: convert.jsonEncode(DataHolder.dataHolder));
-
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Duty published.")));
-      jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
-      return true;
-    } else if (response.statusCode == 400) {
-      jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonResponse['error'].toString())));
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Duty published.")));
+        jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
+        return true;
+      } else if (response.statusCode == 400) {
+        jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonResponse['error'].toString())));
+        return false;
+      } else
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")));
       return false;
-    } else
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")));
-    return false;
+    }
+
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("can't get location, re-tap on location button -> Step 2")));
+      return false;
+    }
   } //addTask()
 
   bool _continue = false;

@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 class Comment extends StatefulWidget {
-  final uid;
+  final uid, dutyId;
 
-  const Comment({Key? key, required this.uid}) : super(key: key);
+  const Comment({Key? key, required this.uid, required this.dutyId}) : super(key: key);
 
   @override
   _CommentState createState() => _CommentState();
@@ -48,7 +48,12 @@ class _CommentState extends State<Comment> {
                         if (value!.isEmpty) {
                           return "Value shouldn't be empty.";
                         } else
-                          _inputComment = {"parent": true, "userId": widget.uid, "comment": value};
+                          _inputComment = {
+                            "parent": true,
+                            "userId": widget.uid,
+                            "comment": value,
+                            "dutyId": widget.dutyId
+                          };
                         return null;
                       },
                     ),
@@ -58,7 +63,7 @@ class _CommentState extends State<Comment> {
                       icon: Icon(Icons.send, color: myPrimaryColor),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          _makeComment(context, _inputComment)
+                          _makeComment(context, _inputComment, widget.dutyId)
                               .then((boolean) => boolean ? _formKey.currentState!.reset() : "");
                         }
                       },
@@ -71,7 +76,7 @@ class _CommentState extends State<Comment> {
               ),
               Container(
                 child: FutureBuilder(
-                    future: _getComments(context),
+                    future: _getComments(context, widget.dutyId),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (!snapshot.hasError && snapshot.data != null) {
                         _comments = snapshot.data;
@@ -95,6 +100,7 @@ class _CommentState extends State<Comment> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: CommentArea(
                                               uid: widget.uid,
+                                              dutyId: widget.dutyId,
                                               replies: _comments[i]['reply'],
                                               comment: _comments[i]['docData'],
                                               parentId: _comments[i]['docId']))),
@@ -114,15 +120,16 @@ class _CommentState extends State<Comment> {
 }
 
 class CommentArea extends StatefulWidget {
-  final comment, uid, parentId, replies;
+  final comment, uid, parentId, replies, dutyId;
 
-  const CommentArea({Key? key,
+  const CommentArea({
+    Key? key,
     required this.comment,
+    required this.dutyId,
     required this.parentId,
     required this.replies,
     required this.uid,
-  })
-      : super(key: key);
+  }) : super(key: key);
 
   @override
   _CommentAreaState createState() => _CommentAreaState();
@@ -138,7 +145,8 @@ class _CommentAreaState extends State<CommentArea> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.comment['comment']),
+        Text("${widget.comment['comment']}", style: TextStyle(fontWeight: FontWeight.bold)),
+        Divider(),
         widget.replies.length != 0
             ? _replyMaker(context, widget.replies)
             : SizedBox(
@@ -180,7 +188,8 @@ class _CommentAreaState extends State<CommentArea> {
                         return "Value shouldn't be empty.";
                       } else
                         _inputCommentReply = {
-                          "docId": widget.parentId,
+                          "docId": widget.parentId, // for path
+                          "dutyId": widget.dutyId, // for name of comment-Doc
                           "parent": widget.comment['userId'],
                           "userId": widget.uid,
                           "comment": value
@@ -200,7 +209,7 @@ class _CommentAreaState extends State<CommentArea> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            _makeComment(context, _inputCommentReply).then((boolean) =>
+                            _makeComment(context, _inputCommentReply, widget.dutyId).then((boolean) =>
                             boolean
                                 ? {
                               _formKey.currentState!.reset(),
@@ -227,17 +236,15 @@ Widget _replyMaker(BuildContext context, List replies) {
           padding: const EdgeInsets.only(top: 5.0),
           child: Container(
               decoration: BoxDecoration(color: myTertiaryColor, borderRadius: BorderRadius.circular(10.0)),
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("► ${replies[i]['comment']}"))),
+              child: Padding(padding: const EdgeInsets.all(8.0), child: Text("► ${replies[i]['comment']}"))),
         );
       });
 }
 
-Future<bool> _makeComment(BuildContext context, Map<String, dynamic> _body) async {
+Future<bool> _makeComment(BuildContext context, Map<String, dynamic> _body, dynamic dutyId) async {
   Map<String, dynamic> jsonResponse = new Map<String, dynamic>();
   final response = await http.post(
-    Uri.parse('https://newoneder.loca.lt/duty/addComment'),
+    Uri.parse('$API_URL/duty/addComment'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -247,7 +254,7 @@ Future<bool> _makeComment(BuildContext context, Map<String, dynamic> _body) asyn
   if (response.statusCode == 200) {
     jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Comment made")));
-    _getComments(context);
+    _getComments(context, dutyId);
     return true;
   } else if (response.statusCode == 400) {
     jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
@@ -259,10 +266,10 @@ Future<bool> _makeComment(BuildContext context, Map<String, dynamic> _body) asyn
   }
 }
 
-Future _getComments(BuildContext context) async {
+Future _getComments(BuildContext context, dynamic dutyId) async {
   Map<String, dynamic> jsonResponse = new Map<String, dynamic>();
   try {
-    final response = await http.get(Uri.parse('https://newoneder.loca.lt/duty/getComments/n226Ha6TnoSgKjnWnwZa'));
+    final response = await http.get(Uri.parse('$API_URL/duty/getComments/$dutyId'));
     if (response.statusCode == 200) {
       jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
       return jsonResponse['result'];

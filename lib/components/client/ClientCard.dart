@@ -248,7 +248,8 @@ Container getDutyDetails(BuildContext context, dynamic userData) {
   );
 }
 
-Widget getOffers(BuildContext context, dynamic userData) {
+Widget getOffers(BuildContext context, dynamic offers) {
+
   Align mainCard = new Align(
     alignment: Alignment.topRight,
     child: Container(
@@ -289,7 +290,7 @@ Widget getOffers(BuildContext context, dynamic userData) {
                     children: [
                       SizedBox(
                           width: 100,
-                          child: Text("Saad Yaseen",
+                          child: Text("RS-/ ${offers[0]["offeredMoney"]} \n${offers[0]["offeredBy"]}",
                               style:
                                   TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0, overflow: TextOverflow.fade))),
                       RatingBarIndicator(
@@ -356,7 +357,7 @@ Widget getOffers(BuildContext context, dynamic userData) {
   );
 }
 
-Container getComments(BuildContext context, dynamic userData) {
-  TextEditingController controller = new TextEditingController();
-  return Container(child: ExpansionTile(title: Text("View Comments"), children: [Comment(uid: userData['uid'])]));
+Container getComments(BuildContext context, dynamic userData, dynamic docId) {
+  return Container(
+      child: ExpansionTile(title: Text("View Comments"), children: [Comment(uid: userData['uid'], dutyId: docId)]));
 }

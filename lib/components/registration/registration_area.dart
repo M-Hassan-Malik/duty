@@ -3,6 +3,7 @@ import 'package:duty/components/registration/regFields.dart';
 import 'package:duty/provider/GoogleAddressProvider.dart';
 import 'package:duty/provider/SignInProvider.dart';
 import 'package:duty/provider/SignInProvider.dart';
+import 'package:duty/provider/url.dart';
 import 'package:duty/ui/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +140,7 @@ class _RegistrationTextFormState extends State<RegistrationTextForm> {
                                 "password": RegFields.userFields['pass'],
                                 "address": convert.jsonEncode(locationAddress),
                               };
-                              http.post(Uri.parse('https://newoneder.loca.lt/user/signup'), body: body).then((response) => {
+                              http.post(Uri.parse('$API_URL/user/signup'), body: body).then((response) => {
                                     if (response.statusCode == 200)
                                       {
                                         jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>,

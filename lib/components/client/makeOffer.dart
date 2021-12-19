@@ -1,3 +1,5 @@
+import 'package:duty/components/storage.dart';
+import 'package:duty/provider/url.dart';
 import 'package:duty/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -67,13 +69,13 @@ class _makeOfferState extends State<makeOffer> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           http
-                              .post(Uri.parse('https://newoneder.loca.lt/duty/addOffer'),
+                              .post(Uri.parse('$API_URL/addOffer'),
                               headers: <String, String>{
                                 'Content-Type': 'application/json; charset=UTF-8',
                               },
                               body: convert.jsonEncode(<String, dynamic>{
                                 'offer': _offerMoney,
-                                'byUser': widget.userData['uid'],
+                                'byUser': UserStorage.currentUserId,
                                 'toDuty': widget.docId,
                                 'country': widget.userData['duty']['country'],
                                 'city': widget.userData['duty']['city'],

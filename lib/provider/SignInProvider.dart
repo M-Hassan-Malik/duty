@@ -1,4 +1,5 @@
 import 'package:duty/components/storage.dart';
+import 'package:duty/provider/url.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class OTPProvider extends ChangeNotifier {
 
     var body = new Map<String, dynamic>();
     body['email'] = email;
-    var response = await http.post(Uri.parse('https://hello.loca.lt/user/verify'), body: body);
+    var response = await http.post(Uri.parse('$API_URL/user/verify'), body: body);
     if (response.statusCode == 200) {
       var jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
       jsonResponse.containsKey('result') ? OTP_Received(jsonResponse) : _validEmail = "Error Sending verification code.\nTry again";

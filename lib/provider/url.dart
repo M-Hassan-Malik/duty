@@ -1,1 +1,1 @@
-final String url = "https://newoneder.loca.lt";
+final String API_URL = "https://newoneder.loca.lt";

@@ -44,9 +44,9 @@ class GetFullDetailsOfDuty extends StatelessWidget {
                 SizedBox(height: 10),
                 getDutyDetails(context, doc['duty']),
                 SizedBox(height: 10),
-                getOffers(context, doc['duty']),
+                getOffers(context, doc['offers']),
                 SizedBox(height: 10),
-                getComments(context, doc['duty'])
+                getComments(context, doc['duty'],docId)
               ],
             ),
           ),

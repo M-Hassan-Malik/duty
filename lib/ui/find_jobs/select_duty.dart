@@ -1,5 +1,6 @@
 import 'dart:convert' as convert;
 import 'package:duty/components/storage.dart';
+import 'package:duty/provider/url.dart';
 import 'package:http/http.dart' as http;
 import 'package:duty/theme.dart';
 import 'package:duty/ui/find_jobs/get_duty.dart';
@@ -47,7 +48,7 @@ class _FindDutyState extends State<FindDuty> {
 
   Future _getDuties() async {
     try {
-      var response = await http.get(Uri.parse('https://newoneder.loca.lt/duty/getDuty'));
+      var response = await http.get(Uri.parse('$API_URL/duty/getDuty'));
       if (response.statusCode == 200) {
         var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
         return result;

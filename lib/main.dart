@@ -48,7 +48,7 @@ class MyHomePage extends StatelessWidget {
       child: (Scaffold(
         backgroundColor: mySecondaryColor,
         body: LandingPage(),
-        //body: Comment(uid: 'fFLzPABNDAT0v2KZrif6ot1ObPy2')
+
       )),
     );
   }
