@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 class makeOffer extends StatefulWidget {
-  final userData, docId;
+  final userData, docId,userName;
 
-  const makeOffer({Key? key, required this.userData, required this.docId}) : super(key: key);
+  const makeOffer({Key? key, required this.userData, required this.docId,required this.userName}) : super(key: key);
 
   @override
   _makeOfferState createState() => _makeOfferState();
@@ -69,13 +69,14 @@ class _makeOfferState extends State<makeOffer> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           http
-                              .post(Uri.parse('$API_URL/addOffer'),
+                              .post(Uri.parse('$API_URL/duty/addOffer'),
                               headers: <String, String>{
                                 'Content-Type': 'application/json; charset=UTF-8',
                               },
                               body: convert.jsonEncode(<String, dynamic>{
-                                'offer': _offerMoney,
                                 'byUser': UserStorage.currentUserId,
+                                'userName': widget.userName,
+                                'offer': _offerMoney,
                                 'toDuty': widget.docId,
                                 'country': widget.userData['duty']['country'],
                                 'city': widget.userData['duty']['city'],
@@ -86,7 +87,7 @@ class _makeOfferState extends State<makeOffer> {
                               {
                                 jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>,
                                 ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(content: Text("Offer Submitted"))),
+                                    .showSnackBar(SnackBar(content: Text("Offer Submitted, will me available soon"))),
                                 Navigator.pop(context)
                               }
                             else

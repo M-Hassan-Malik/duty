@@ -1,8 +1,7 @@
-import 'package:duty/components/client/comment.dart';
 import 'package:duty/components/registration/OTP.dart';
 import 'package:duty/components/registration/registration_area.dart';
+import 'package:duty/provider/helpers.dart';
 import 'package:duty/theme.dart';
-import 'package:duty/ui/home_page.dart';
 import 'package:flutter/services.dart';
 import 'package:duty/provider/GoogleAddressProvider.dart';
 import 'package:duty/provider/SignInProvider.dart';
@@ -23,6 +22,7 @@ Future main() async {
       ChangeNotifierProvider<StepperProviderLocation>(create: (_) => StepperProviderLocation()),
       ChangeNotifierProvider<StepperProviderContinuity>(create: (_) => StepperProviderContinuity()),
       ChangeNotifierProvider<OTPProvider>(create: (_) => OTPProvider()),
+      ChangeNotifierProvider<Helper>(create: (_) => Helper()),
     ],
     child: MaterialApp(
       initialRoute: '/',

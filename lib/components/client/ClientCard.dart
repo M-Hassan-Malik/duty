@@ -1,50 +1,66 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:duty/components/client/Offers.dart';
 import 'package:duty/components/client/comment.dart';
 import 'package:duty/components/client/makeOffer.dart';
+import 'package:duty/components/storage.dart';
 import 'package:duty/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
-Padding getFirstRow(dynamic doc) {
+Padding getFirstRow(int? status) {
   return Padding(
-    padding: const EdgeInsets.only(top: 15.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text("Available",
+      padding: const EdgeInsets.only(top: 15.0),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Available",
             style: TextStyle(
                 shadows: [Shadow(color: Colors.black, offset: Offset(0, -8))],
                 color: Colors.transparent,
                 decoration: TextDecoration.underline,
                 decorationThickness: 10,
-                decorationColor: doc['done'] >= 0 ? Colors.green : myTertiaryColor)),
-        SizedBox(width: 5.0),
-        Text("Assigned",
+                decorationColor: status! >= 0 ? Color(0xff14dc99) : myTertiaryColor)),
+          ),
+
+
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("Assigned",
             style: TextStyle(
                 shadows: [Shadow(color: Colors.black, offset: Offset(0, -8))],
                 color: Colors.transparent,
                 decoration: TextDecoration.underline,
                 decorationThickness: 10,
-                decorationColor: doc['done'] >= 1 ? Color(0xff14dc99) : myTertiaryColor)),
-        SizedBox(width: 5.0),
-        Text("Completed",
+                decorationColor: status >= 1 ? Color(0xff14dc99) : myTertiaryColor)),
+      ),
+
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("Completed",
             style: TextStyle(
                 shadows: [Shadow(color: Colors.black, offset: Offset(0, -8))],
                 color: Colors.transparent,
                 decoration: TextDecoration.underline,
                 decorationThickness: 10,
-                decorationColor: doc['done'] >= 2 ? Color(0xff14dc99) : myTertiaryColor)),
-        SizedBox(width: 5.0),
-        Text("Reviewed",
+                decorationColor: status >= 2 ? Color(0xff14dc99) : myTertiaryColor)),
+      ),
+
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("Reviewed",
             style: TextStyle(
                 shadows: [Shadow(color: Colors.black, offset: Offset(0, -8))],
                 color: Colors.transparent,
                 decoration: TextDecoration.underline,
                 decorationThickness: 10,
-                decorationColor: doc['done'] == 3 ? Color(0xff14dc99) : myTertiaryColor)),
-      ],
-    ),
+                decorationColor: status == 3 ? Color(0xff14dc99) : myTertiaryColor)),
+      )
+  ],
+  )
+  ,
   );
 }
 
@@ -69,13 +85,21 @@ Container getClientCard(BuildContext context, dynamic userData) {
     DateTime from = timestampToDateTime;
     DateTime to = DateTime.now();
 
-    int time = (to.difference(from).inHours);
+    int time = (to
+        .difference(from)
+        .inHours);
     if (time < 24 && time > 0) {
       return time > 1 ? time.toString() + " hours ago" : time.toString() + " hour ago";
     } else {
-      return (to.difference(from).inDays) > 23
-          ? (to.difference(from).inDays).toString() + " Days ago"
-          : (to.difference(from).inDays).toString() + " Day ago";
+      return (to
+          .difference(from)
+          .inDays) > 23
+          ? (to
+          .difference(from)
+          .inDays).toString() + " Days ago"
+          : (to
+          .difference(from)
+          .inDays).toString() + " Day ago";
     }
   }
 
@@ -87,7 +111,10 @@ Container getClientCard(BuildContext context, dynamic userData) {
         blurRadius: 6.0,
       ),
     ]),
-    width: MediaQuery.of(context).size.width,
+    width: MediaQuery
+        .of(context)
+        .size
+        .width,
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Column(children: <Widget>[
@@ -151,7 +178,10 @@ Container getClientCard(BuildContext context, dynamic userData) {
                     textAlign: TextAlign.left,
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.35,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.35,
                     child: Text(
                       userData['address'],
                       style: TextStyle(color: myPrimaryColor, fontSize: 10),
@@ -178,7 +208,11 @@ Container getClientCard(BuildContext context, dynamic userData) {
               textAlign: TextAlign.center,
             ),
             Text(
-              DateTime.fromMillisecondsSinceEpoch(userData['date']['_seconds'] * 1000).toString().split(" ").first,
+              DateTime
+                  .fromMillisecondsSinceEpoch(userData['date']['_seconds'] * 1000)
+                  .toString()
+                  .split(" ")
+                  .first,
               style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             )
@@ -191,8 +225,14 @@ Container getClientCard(BuildContext context, dynamic userData) {
 
 Container getMakeOfferCard(BuildContext context, dynamic userData, String docId) {
   return Container(
-      height: MediaQuery.of(context).size.height * 0.2,
-      width: MediaQuery.of(context).size.width,
+      height: MediaQuery
+          .of(context)
+          .size
+          .height * 0.2,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       decoration: BoxDecoration(color: myPrimaryColor, borderRadius: BorderRadius.circular(10.0)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -218,14 +258,20 @@ Container getMakeOfferCard(BuildContext context, dynamic userData, String docId)
               style: ElevatedButton.styleFrom(primary: mySecondaryColor),
               child: Text("Make your offer?", style: TextStyle(color: myPrimaryColor)),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => makeOffer(
-                            userData: userData,
-                            docId: docId,
-                          )),
-                );
+                UserStorage.readGoogleUser('name').then((name) =>
+                {
+                  if (name != null)
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => makeOffer(userData: userData, docId: docId, userName: name)),
+                      )
+                    }
+                  else
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Can't find your google Username. Please 'Sign-in' again.")))
+                });
               },
             ),
           ],
@@ -235,7 +281,10 @@ Container getMakeOfferCard(BuildContext context, dynamic userData, String docId)
 
 Container getDutyDetails(BuildContext context, dynamic userData) {
   return Container(
-    width: MediaQuery.of(context).size.width,
+    width: MediaQuery
+        .of(context)
+        .size
+        .width,
     decoration: BoxDecoration(color: myTertiaryColor, borderRadius: BorderRadius.circular(10.0)),
     child: Padding(
       padding: const EdgeInsets.all(5.0),
@@ -246,116 +295,20 @@ Container getDutyDetails(BuildContext context, dynamic userData) {
       ),
     ),
   );
-}
+} //GetDutiesDetails
 
-Widget getOffers(BuildContext context, dynamic offers) {
-
-  Align mainCard = new Align(
-    alignment: Alignment.topRight,
-    child: Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      decoration: BoxDecoration(
-        color: myTertiaryColor,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: myTertiaryColor,
-            offset: Offset(-3.0, 3.0), //(x,y)
-            blurRadius: 6.0,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 5.0, left: 40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Center(child: Text("Verification")),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                Icon(Icons.email_outlined, color: myPrimaryColor),
-                Icon(Icons.smartphone_outlined, color: myPrimaryColor),
-                Icon(Icons.perm_identity_outlined, color: myPrimaryColor),
-                Icon(Icons.credit_card_outlined, color: myPrimaryColor),
-              ]),
-            ),
-            Divider(thickness: 5),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      SizedBox(
-                          width: 100,
-                          child: Text("RS-/ ${offers[0]["offeredMoney"]} \n${offers[0]["offeredBy"]}",
-                              style:
-                                  TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0, overflow: TextOverflow.fade))),
-                      RatingBarIndicator(
-                          rating: 2.5,
-                          itemSize: 20,
-                          physics: BouncingScrollPhysics(),
-                          itemBuilder: (context, _) => Icon(Icons.star, color: Colors.amber)),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text("Yesterday", style: TextStyle(fontSize: 8.0)),
-                      Container(
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: Colors.green),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 3.0),
-                            child: Text("100%", style: TextStyle(fontSize: 8.0)),
-                          )),
-                      Text("Completion Rate", style: TextStyle(fontSize: 8.0)),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    ),
-  );
-  Widget getOffersCard(context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        mainCard,
-        Align(
-            alignment: Alignment.centerLeft,
-            child: Icon(
-              Icons.account_circle,
-              color: myPrimaryColor,
-              size: 110,
-            )),
-      ],
-    );
-  }
-
-  return Container(
-    child: ExpansionTile(
-      title: Text("View offers"),
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: getOffersCard(context),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: getOffersCard(context),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: getOffersCard(context),
-        ),
-      ],
-    ),
-  );
-}
+Widget getOffers(BuildContext context, Map<String, dynamic> details) {
+  return details['doc']['offers'] != null && details['status'] == 0
+      ? Container(
+      child: ExpansionTile(
+          leading: Icon(Icons.lightbulb, color: Colors.yellow),
+          title: Text("View offers"),
+          children: [Offers(details: details)]))
+      : Container(
+      child: ExpansionTile(
+          title: Text("View offers"),
+          children: [Offers(details: details)]));
+} //getOffers
 
 Container getComments(BuildContext context, dynamic userData, dynamic docId) {
   return Container(

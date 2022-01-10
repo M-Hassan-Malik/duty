@@ -1,24 +1,35 @@
 import 'dart:convert' as convert;
 import 'package:duty/components/storage.dart';
+import 'package:duty/provider/GoogleAddressProvider.dart';
 import 'package:duty/provider/url.dart';
 import 'package:http/http.dart' as http;
 import 'package:duty/theme.dart';
-import 'package:duty/ui/find_jobs/get_duty.dart';
+import 'package:duty/components/client/getDuties.dart';
 import 'package:flutter/material.dart';
-import 'package:duty/provider/GoogleAddressProvider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
-class FindDuty extends StatefulWidget {
-  const FindDuty({Key? key}) : super(key: key);
+class LoadDuty extends StatefulWidget {
+  final myDuty;
+
+  const LoadDuty({Key? key, required this.myDuty}) : super(key: key);
 
   @override
-  _FindDutyState createState() => _FindDutyState();
+  _LoadDutyState createState() => _LoadDutyState();
 }
 
-class _FindDutyState extends State<FindDuty> {
+class _LoadDutyState extends State<LoadDuty> {
+    var response;
+
+  _getStatusError(int responseCode,BuildContext context) {
+    responseCode == 400 ?
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("response.statusCode:400: Error Occurred"))) :
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")));
+  }
+
   late ScrollController _chatScrollController;
-  int _perPage = 10, _increment = 10;
+  int _perPage = 10,
+      _increment = 10;
   String userCurrent = "";
   var data;
 
@@ -47,13 +58,54 @@ class _FindDutyState extends State<FindDuty> {
   }
 
   Future _getDuties() async {
+    print("_getDuty");
     try {
-      var response = await http.get(Uri.parse('$API_URL/duty/getDuty'));
+
+      response = await http.get(Uri.parse('$API_URL/duty/getDuty'));
       if (response.statusCode == 200) {
         var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
         return result;
       } else if (response.statusCode == 400) {
+        _getStatusError(400,context);
         return null;
+      }
+      else {
+        _getStatusError(0,context);
+        return null;
+      }
+    } catch (e) {
+      print("try caught: $e");
+      return null;
+    }
+  }
+
+  Future _getMyDuties(BuildContext context) async {
+    print("getMYDuty");
+    try {
+      var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
+      await provider.findCurrentLocation();
+      Map<String, String?>? locationAddress = await provider.getFullAddress()!;
+      if (locationAddress['city'] != null && locationAddress['country'] != null) {
+        print("$API_URL : ${locationAddress.toString()}");
+        response = await http.post(Uri.parse('$API_URL/user/getDuty'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: convert.jsonEncode({
+              "uid" : UserStorage.currentUserId,
+              "city" :locationAddress['city'],
+              "country" :locationAddress['country'],
+            }));
+        if (response.statusCode == 200) {
+          var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
+          return result;
+        } else if (response.statusCode == 400) {
+          _getStatusError(400,context);
+          return null;
+        } else {
+          _getStatusError(0,context);
+          return null;
+        }
       }
     } catch (e) {
       print("try caught: $e");
@@ -64,10 +116,10 @@ class _FindDutyState extends State<FindDuty> {
   @override
   Widget build(BuildContext context) {
     userCurrent = UserStorage.currentUserId;
-
     return Scaffold(
-      body: FutureBuilder(
-          future: _getDuties(),
+
+    body: FutureBuilder(
+          future: widget.myDuty ? _getMyDuties(context) : _getDuties(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasError && snapshot.data != null) {
               data = snapshot.data['result'];
@@ -76,11 +128,14 @@ class _FindDutyState extends State<FindDuty> {
                   itemCount: data.length,
                   itemBuilder: (context, i) {
                     return Padding(
-                      padding: const EdgeInsets.only(right: 5.0,top: 8.0),
+                      padding: const EdgeInsets.only(right: 5.0, top: 8.0),
                       child: InkWell(
                           onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => GetFullDetailsOfDuty(doc: data[i]['docData'],docId: data[i]['docId'] )));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        GetFullDetailsOfDuty(doc: data[i]['docData'], docId: data[i]['docId'])));
                           },
                           child: Stack(
                             alignment: Alignment.center,
@@ -88,7 +143,10 @@ class _FindDutyState extends State<FindDuty> {
                               Align(
                                 alignment: Alignment.topRight,
                                 child: Container(
-                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width * 0.8,
                                   decoration: BoxDecoration(
                                     color: myTertiaryColor,
                                     borderRadius: BorderRadius.circular(10.0),
@@ -107,12 +165,12 @@ class _FindDutyState extends State<FindDuty> {
                                       children: <Widget>[
                                         Center(
                                             child: Text(
-                                          data[i]['docData']['duty']['title'],
-                                          style: TextStyle(
-                                              overflow: TextOverflow.ellipsis,
-                                              fontWeight: FontWeight.bold,
-                                              color: myPrimaryColor),
-                                        )),
+                                              data[i]['docData']['duty']['title'],
+                                              style: TextStyle(
+                                                  overflow: TextOverflow.ellipsis,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: myPrimaryColor),
+                                            )),
                                         Row(
                                           children: [
                                             Icon(
@@ -142,7 +200,10 @@ class _FindDutyState extends State<FindDuty> {
                                               ),
                                               SizedBox(width: 1),
                                               Flexible(
-                                                child: Text("Payment: " + data[i]['docData']['duty']['payment'].toString() + "/-",
+                                                child: Text(
+                                                    "Payment: " +
+                                                        data[i]['docData']['duty']['payment'].toString() +
+                                                        "/-",
                                                     style: TextStyle(fontSize: 15.0)),
                                               ),
                                             ],

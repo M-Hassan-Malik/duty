@@ -50,14 +50,14 @@ class _LocationAndTimeState extends State<LocationAndTime> {
       setContinuityTrue();
       DataHolder.dataHolder["place"] = latLng;
     } else
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Re-tap on Location button, Please. Cannot get your location.")));
   }
 
   DateTime selectedDate = DateTime.now();
   DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
 
   Future<void> _selectDate(BuildContext context) async {
-
     final DateTime? picked = await showDatePicker(
         context: context, initialDate: selectedDate, firstDate: DateTime(2021, 4), lastDate: DateTime(2101));
 

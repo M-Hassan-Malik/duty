@@ -49,34 +49,60 @@ class PostingDuty extends StatelessWidget {
           backgroundColor: myPrimaryColor,
           foregroundColor: mySecondaryColor,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            child: Consumer<StepperProviderContinuity>(builder: (context, value, child) {
-              return Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Theme(
-                      data: ThemeData(colorScheme: ColorScheme.light(primary: myPrimaryColor)),
-                      child: Stepper(
-                          steps: mySteps,
-                          type: StepperType.vertical,
-                          currentStep: value.currentStep,
-                          onStepContinue: value.getContinuityValidation == true
-                              ? () {
-                                  value.next(mySteps.length, context);
-                                  value.setContinuityFalse();
-                                }
-                              : null,
-                          onStepCancel: value.cancel,
-                          onStepTapped: (step) => value.goTo(step)),
+        body: Consumer<StepperProviderContinuity>(builder: (context, value, child) {
+          return Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Theme(
+                        data: ThemeData(colorScheme: ColorScheme.light(primary: myPrimaryColor)),
+                        child: Stepper(
+                            steps: mySteps,
+                            type: StepperType.vertical,
+                            currentStep: value.currentStep,
+                            onStepContinue: value.getContinuityValidation == true
+                                ? () {
+                                    value.next(mySteps.length, context);
+                                    value.setContinuityFalse();
+                                  }
+                                : null,
+                            onStepCancel: value.cancel,
+                            onStepTapped: (step) => value.goTo(step)),
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }),
-          ),
-        ),
+                  ],
+                )),
+              ),
+              Visibility(
+                visible: value.visibility,
+                child: Container(
+                  color: Colors.black54,
+                  child: Center(
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 10,
+                            color: myPrimaryColor,
+                          )),
+                    ),
+                    Text(
+                      "Please Wait...",
+                      style: TextStyle(fontSize: 30.0, color: myPrimaryColor),
+                    )
+                  ])),
+                ),
+              )
+            ],
+          );
+        }),
       ),
     );
   }

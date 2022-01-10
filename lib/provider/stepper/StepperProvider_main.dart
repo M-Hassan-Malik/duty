@@ -7,10 +7,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 class StepperProviderContinuity extends ChangeNotifier {
+  bool visibility = false;
   Future<bool> addTask(BuildContext context) async {
+    visibility = true;
     var locationAddress = Provider.of<StepperProviderLocation>(context, listen: false).getFullAddress()!;
     var jsonResponse = new Map<String, dynamic>();
-
     DataHolder.dataHolder['uid'] = UserStorage.currentUserId;
     DataHolder.dataHolder['city'] = locationAddress['city'];
     DataHolder.dataHolder['country'] = locationAddress['country'];
@@ -22,16 +23,23 @@ class StepperProviderContinuity extends ChangeNotifier {
           body: convert.jsonEncode(DataHolder.dataHolder));
 
       if (response.statusCode == 200) {
+        visibility = false;
+        notifyListeners();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Duty published.")));
         jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
         return true;
       } else if (response.statusCode == 400) {
+        visibility = false;
+        notifyListeners();
         jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonResponse['error'].toString())));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${jsonResponse['error'].toString()}: Some data is missing. Please re-check the Form. ")));
         return false;
-      } else
+      } else {
+        visibility = false;
+        notifyListeners();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")));
-      return false;
+        return false;
+      }
     }
 
     else {
@@ -102,7 +110,5 @@ class DataHolder {
     "person": 0,
     "payment": 0,
     "done": 0,
-    "Offers": "",
-    "Comments": "",
   };
 }

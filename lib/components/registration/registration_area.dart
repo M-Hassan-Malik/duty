@@ -130,7 +130,7 @@ class _RegistrationTextFormState extends State<RegistrationTextForm> {
                             };
                             var jsonResponse = Map<String, dynamic>();
                             if (_formKey.currentState!.validate()) {
-                              Provider.of<GoogleAddressProvider>(context, listen: false).getCurrentAddress();
+                              Provider.of<GoogleAddressProvider>(context, listen: false).findCurrentLocation();
                               locationAddress =
                                   Provider.of<GoogleAddressProvider>(context, listen: false).getFullAddress()!;
                               body = {

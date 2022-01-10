@@ -1,4 +1,5 @@
 import 'package:duty/components/client/ClientCard.dart';
+import 'package:duty/components/storage.dart';
 import 'package:duty/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,12 @@ class GetFullDetailsOfDuty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+    int _status = doc['status'] != null ? doc['status']['status'] : 0;
+    print(_status);
     return Scaffold(
+
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0))),
@@ -24,12 +30,16 @@ class GetFullDetailsOfDuty extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                getFirstRow(doc['duty']),
+                getFirstRow(_status),
                 SizedBox(height: 20.0),
                 getClientCard(context, doc['duty']),
                 SizedBox(height: 15.0),
-                getMakeOfferCard(context, doc, docId),
-                SizedBox(height: 10.0),
+                Visibility(
+                    visible: doc['duty']['uid'] != UserStorage.currentUserId,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                      child: getMakeOfferCard(context, doc, docId),
+                    )),
                 Divider(
                   color: myTertiaryColor,
                 ),
@@ -44,9 +54,13 @@ class GetFullDetailsOfDuty extends StatelessWidget {
                 SizedBox(height: 10),
                 getDutyDetails(context, doc['duty']),
                 SizedBox(height: 10),
-                getOffers(context, doc['offers']),
+                getOffers(context, {
+                  "doc": doc,
+                  "docId": docId,
+                  "status": _status
+                }),
                 SizedBox(height: 10),
-                getComments(context, doc['duty'],docId)
+                getComments(context, doc['duty'], docId)
               ],
             ),
           ),

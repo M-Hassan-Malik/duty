@@ -24,7 +24,16 @@ class GoogleSignInProvider extends ChangeNotifier {
       final credentials =
           GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
       var googleUserInfo = await FirebaseAuth.instance.signInWithCredential(credentials);
-      googleUserInfo.user != null ? UserStorage.storeGoogleUser(googleUserInfo.user?.uid,context) : "";
+      if(googleUserInfo.user != null) {
+         Map<String,dynamic> userData= {
+          "uid":  googleUserInfo.user?.uid,
+          "email":  googleUserInfo.user?.email,
+          "name":  googleUserInfo.user?.displayName,
+          "photoURL":  googleUserInfo.user?.photoURL,
+
+          };
+        UserStorage.storeGoogleUser(userData, context);
+      }else "";
     } catch (e) {
       print("google sign in catch-> ${e.toString()}");
     }
@@ -92,14 +101,24 @@ class FirebaseAuthenticationProvider {
     return false;
   } //
 
-  Future<String> signIn(String _email, String _pass) async {
+  signIn(String _email, String _pass,context) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: _email, password: _pass);
-      print("Successful Sign in: ");
-      return "logging in...";
+      UserCredential credentials = await _auth.signInWithEmailAndPassword(email: _email, password: _pass);
+      if(credentials.user != null) {
+        Map<String,dynamic> userData= {
+          "uid":  credentials.user?.uid,
+          "email":  credentials.user?.email,
+          "name":  credentials.user?.displayName,
+          "photoURL":  credentials.user?.photoURL,
+        };
+        UserStorage.storeGoogleUser(userData, context);
+      }else "";
     } catch (e) {
-      print("failed Sinin: ${e.toString()}");
-      return e.toString();
+      ScaffoldMessenger.of(context)
+
+          .showSnackBar(SnackBar(
+          duration: Duration(seconds: 8, milliseconds: 500),
+      content: Text(e.toString())));
     }
   } //
 

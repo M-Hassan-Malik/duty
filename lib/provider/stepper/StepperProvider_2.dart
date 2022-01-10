@@ -39,8 +39,6 @@ class StepperProviderLocation extends ChangeNotifier {
     });
   }
 
-  //getCoordinatesFromPosition(Coordinates(position.latitude, position.longitude));
-
   void getCoordinatesFromPosition(Coordinates coordinates) async {
     var address = await Geocoder.local.findAddressesFromCoordinates(coordinates);
     first = address.first;

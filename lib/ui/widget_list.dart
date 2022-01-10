@@ -1,5 +1,5 @@
 import 'package:duty/theme.dart';
-import 'package:duty/ui/find_jobs/select_duty.dart';
+import 'package:duty/components/client/loadDuties.dart';
 import 'package:duty/ui/post_duty/post_duty.dart';
 import 'package:flutter/material.dart';
 import '../components/GirdViewList.dart';
@@ -8,11 +8,11 @@ Widget? getCurrentScreen(int index) {
   switch (index) {
     case 0:
       {
-        return FindDuty();
+        return LoadDuty(myDuty: false); // Find Duties
       }
     case 1:
       {
-        return Text('MY Duties');
+        return LoadDuty(myDuty: true); // My Duties
       }
     case 2:
       {

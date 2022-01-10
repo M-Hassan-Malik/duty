@@ -38,6 +38,7 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   http: ^0.13.4
   flutter_secure_storage: ^5.0.2
+  geocoding: ^2.0.1
 
 dev_dependencies:
   flutter_test:

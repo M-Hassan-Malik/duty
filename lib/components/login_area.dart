@@ -74,11 +74,7 @@ class _LoginTextFormState extends State<LoginTextForm> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       FirebaseAuthenticationProvider object = FirebaseAuthenticationProvider();
-                      String str = await object.signIn(email, password);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(str)));
-                      if (str == "logging in...") {
-                        Navigator.pushNamed(context, '/homePageRoute');
-                      }
+                      await object.signIn(email, password,context);
                     }
                   },
                   child: Text("Login"),

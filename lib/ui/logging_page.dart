@@ -9,7 +9,7 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
-      future: UserStorage.readGoogleUser(),
+      future: UserStorage.readGoogleUser("uid"),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -19,7 +19,7 @@ class LandingPage extends StatelessWidget {
         } else if (snapshot.hasData) {
           return HomePage(uid: snapshot.data);
         } else if (snapshot.hasError) {
-          return Center(child: Text('Something went wrong!'));
+          return Login();
         } else {
           return Login();
         }
