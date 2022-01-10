@@ -55,7 +55,10 @@ class GetFullDetailsOfDuty extends StatelessWidget {
                 getDutyDetails(context, doc['duty']),
                 SizedBox(height: 10),
                 getOffers(context, {
-                  "doc": doc,
+                  "uid": doc['uid'],
+                  "city": doc['duty']['city'],
+                  "country": doc['duty']['country'],
+                  "offeredMoney": doc['offers']['offeredMoney'],
                   "docId": docId,
                   "status": _status
                 }),

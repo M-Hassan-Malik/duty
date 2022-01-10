@@ -298,7 +298,7 @@ Container getDutyDetails(BuildContext context, dynamic userData) {
 } //GetDutiesDetails
 
 Widget getOffers(BuildContext context, Map<String, dynamic> details) {
-  return details['doc']['offers'] != null && details['status'] == 0
+  return details['offers'] != null && details['status'] == 0
       ? Container(
       child: ExpansionTile(
           leading: Icon(Icons.lightbulb, color: Colors.yellow),
