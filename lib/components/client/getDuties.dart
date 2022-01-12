@@ -3,27 +3,33 @@ import 'package:duty/components/storage.dart';
 import 'package:duty/theme.dart';
 import 'package:flutter/material.dart';
 
-class GetFullDetailsOfDuty extends StatelessWidget {
+class GetFullDetailsOfDuty extends StatefulWidget {
   final doc, docId;
-
   const GetFullDetailsOfDuty({Key? key, required this.doc, required this.docId}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-    int _status = doc['status'] != null ? doc['status']['status'] : 0;
-    print(_status);
-    return Scaffold(
+  _GetFullDetailsOfDutyState createState() => _GetFullDetailsOfDutyState();
+}
 
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0))),
-        backgroundColor: myPrimaryColor,
-        foregroundColor: mySecondaryColor,
-        title: Text(docId),
-      ),
-      body: SingleChildScrollView(
+class _GetFullDetailsOfDutyState extends State<GetFullDetailsOfDuty> {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+    TextEditingController textEditingController = new TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    final doc =widget.doc;
+    final docId =widget.docId;
+    int _status = doc['status'] != null ? doc['status']['status'] : 0;
+
+    return Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0))),
+          backgroundColor: myPrimaryColor,
+          foregroundColor: mySecondaryColor,
+          title: Text(widget.docId),
+        ),
+        body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(5.0),
           child: Container(
@@ -54,16 +60,16 @@ class GetFullDetailsOfDuty extends StatelessWidget {
                 SizedBox(height: 10),
                 getDutyDetails(context, doc['duty']),
                 SizedBox(height: 10),
-                getOffers(context, {
+                getOffers( {
                   "uid": doc['uid'],
                   "city": doc['duty']['city'],
                   "country": doc['duty']['country'],
-                  "offeredMoney": doc['offers']['offeredMoney'],
+                  "offeredMoney": doc['offers'],
                   "docId": docId,
                   "status": _status
                 }),
                 SizedBox(height: 10),
-                getComments(context, doc['duty'], docId)
+                getComments(doc['duty'], docId)
               ],
             ),
           ),
@@ -72,3 +78,4 @@ class GetFullDetailsOfDuty extends StatelessWidget {
     );
   }
 }
+

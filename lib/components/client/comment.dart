@@ -33,6 +33,7 @@ class _CommentState extends State<Comment> {
                   Form(
                     key: _formKey,
                     child: TextFormField(
+                      keyboardType: TextInputType.text,
                       minLines: 2,
                       maxLines: 20,
                       decoration: InputDecoration(
@@ -43,7 +44,6 @@ class _CommentState extends State<Comment> {
                           focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: myPrimaryColor)),
                           hintStyle: TextStyle(fontSize: 15, color: Colors.black),
                           hintText: '► Type comment...'),
-                      keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value!.isEmpty) {
                           return "Value shouldn't be empty.";
@@ -103,7 +103,8 @@ class _CommentState extends State<Comment> {
                                               dutyId: widget.dutyId,
                                               replies: _comments[i]['reply'],
                                               comment: _comments[i]['docData'],
-                                              parentId: _comments[i]['docId']))),
+                                              parentId: _comments[i]['docId'])
+                                      )),
                                 );
                               }),
                         );

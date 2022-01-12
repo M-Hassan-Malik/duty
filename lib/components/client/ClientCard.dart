@@ -297,7 +297,7 @@ Container getDutyDetails(BuildContext context, dynamic userData) {
   );
 } //GetDutiesDetails
 
-Widget getOffers(BuildContext context, Map<String, dynamic> details) {
+Widget getOffers( Map<String, dynamic> details) {
   return details['offers'] != null && details['status'] == 0
       ? Container(
       child: ExpansionTile(
@@ -310,7 +310,6 @@ Widget getOffers(BuildContext context, Map<String, dynamic> details) {
           children: [Offers(details: details)]));
 } //getOffers
 
-Container getComments(BuildContext context, dynamic userData, dynamic docId) {
-  return Container(
-      child: ExpansionTile(title: Text("View Comments"), children: [Comment(uid: userData['uid'], dutyId: docId)]));
+Widget getComments( dynamic userData, dynamic docId) {
+  return Container(child: ExpansionTile(title: Text("View Comments"), children: [Comment(uid: userData['uid'], dutyId: docId)]));
 }

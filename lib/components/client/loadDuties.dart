@@ -80,7 +80,7 @@ class _LoadDutyState extends State<LoadDuty> {
   }
 
   Future _getMyDuties(BuildContext context) async {
-    print("getMYDuty");
+    print("My Duty");
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
       await provider.findCurrentLocation();
