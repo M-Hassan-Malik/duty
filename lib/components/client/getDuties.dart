@@ -64,12 +64,17 @@ class _GetFullDetailsOfDutyState extends State<GetFullDetailsOfDuty> {
                   "uid": doc['uid'],
                   "city": doc['duty']['city'],
                   "country": doc['duty']['country'],
-                  "offeredMoney": doc['offers'],
                   "docId": docId,
+                  "offeredMoney": doc['offers'],
                   "status": _status
                 }),
                 SizedBox(height: 10),
-                getComments(doc['duty'], docId)
+                getComments({
+                  "uid": doc['uid'],
+                  'doc': doc['duty'],
+                  "docId": docId
+                })
+
               ],
             ),
           ),

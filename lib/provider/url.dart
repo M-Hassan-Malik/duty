@@ -1,2 +1,2 @@
-final String API_URL = "https://hello.loca.lt";
-//final String API_URL = "https://duty-backend.herokuapp.com";
+//final String API_URL = "https://woapi.loca.lt";
+final String API_URL = "https://duty-backend.herokuapp.com";

@@ -58,20 +58,32 @@ class _LoadDutyState extends State<LoadDuty> {
   }
 
   Future _getDuties() async {
+
     print("_getDuty");
     try {
-
-      response = await http.get(Uri.parse('$API_URL/duty/getDuty'));
-      if (response.statusCode == 200) {
-        var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
-        return result;
-      } else if (response.statusCode == 400) {
-        _getStatusError(400,context);
-        return null;
-      }
-      else {
-        _getStatusError(0,context);
-        return null;
+      var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
+      await provider.findCurrentLocation();
+      Map<String, String?>? locationAddress = await provider.getFullAddress()!;
+      if (locationAddress['city'] != null && locationAddress['country'] != null) {
+        print("$API_URL : ${locationAddress.toString()}");
+        response = await http.post(Uri.parse('$API_URL/duty/getDuty'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: convert.jsonEncode({
+              "city" :locationAddress['city'],
+              "country" :locationAddress['country'],
+            }));
+        if (response.statusCode == 200) {
+          var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
+          return result;
+        } else if (response.statusCode == 400) {
+          _getStatusError(400,context);
+          return null;
+        } else {
+          _getStatusError(0,context);
+          return null;
+        }
       }
     } catch (e) {
       print("try caught: $e");
@@ -80,6 +92,7 @@ class _LoadDutyState extends State<LoadDuty> {
   }
 
   Future _getMyDuties(BuildContext context) async {
+
     print("My Duty");
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);

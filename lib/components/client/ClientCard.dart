@@ -310,6 +310,6 @@ Widget getOffers( Map<String, dynamic> details) {
           children: [Offers(details: details)]));
 } //getOffers
 
-Widget getComments( dynamic userData, dynamic docId) {
-  return Container(child: ExpansionTile(title: Text("View Comments"), children: [Comment(uid: userData['uid'], dutyId: docId)]));
+Widget getComments(Map<String, dynamic> details) {
+  return Container(child: ExpansionTile(title: Text("View Comments"), children: [Comment(details: details)]));
 }

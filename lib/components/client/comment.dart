@@ -6,9 +6,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 class Comment extends StatefulWidget {
-  final uid, dutyId;
+  final details;
 
-  const Comment({Key? key, required this.uid, required this.dutyId}) : super(key: key);
+  const Comment({Key? key, required this.details}) : super(key: key);
 
   @override
   _CommentState createState() => _CommentState();
@@ -50,9 +50,11 @@ class _CommentState extends State<Comment> {
                         } else
                           _inputComment = {
                             "parent": true,
-                            "userId": widget.uid,
+                            "userId": widget.details['uid'],
+                            "dutyId": widget.details['docId'],
+                            "country": widget.details['country'],
+                            "city": widget.details['city'],
                             "comment": value,
-                            "dutyId": widget.dutyId
                           };
                         return null;
                       },
@@ -63,7 +65,7 @@ class _CommentState extends State<Comment> {
                       icon: Icon(Icons.send, color: myPrimaryColor),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          _makeComment(context, _inputComment, widget.dutyId)
+                          _makeComment(context, _inputComment, widget.details['docId'])
                               .then((boolean) => boolean ? _formKey.currentState!.reset() : "");
                         }
                       },
@@ -76,7 +78,7 @@ class _CommentState extends State<Comment> {
               ),
               Container(
                 child: FutureBuilder(
-                    future: _getComments(context, widget.dutyId),
+                    future: _getComments(context, widget.details['docId']),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (!snapshot.hasError && snapshot.data != null) {
                         _comments = snapshot.data;
@@ -99,12 +101,13 @@ class _CommentState extends State<Comment> {
                                       child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: CommentArea(
-                                              uid: widget.uid,
-                                              dutyId: widget.dutyId,
+                                              uid: widget.details['uid'],
+                                              dutyId: widget.details['docId'],
                                               replies: _comments[i]['reply'],
                                               comment: _comments[i]['docData'],
-                                              parentId: _comments[i]['docId'])
-                                      )),
+                                              country: widget.details['country'],
+                                              city: widget.details['city'],
+                                              parentId: _comments[i]['docId']))),
                                 );
                               }),
                         );
@@ -121,12 +124,14 @@ class _CommentState extends State<Comment> {
 }
 
 class CommentArea extends StatefulWidget {
-  final comment, uid, parentId, replies, dutyId;
+  final comment, uid, parentId, replies, dutyId, country, city;
 
   const CommentArea({
     Key? key,
     required this.comment,
     required this.dutyId,
+    required this.city,
+    required this.country,
     required this.parentId,
     required this.replies,
     required this.uid,
@@ -151,9 +156,9 @@ class _CommentAreaState extends State<CommentArea> {
         widget.replies.length != 0
             ? _replyMaker(context, widget.replies)
             : SizedBox(
-          height: 0,
-          width: 0,
-        ),
+                height: 0,
+                width: 0,
+              ),
         TextButton(
             child: Align(
                 alignment: Alignment.bottomRight,
@@ -192,6 +197,8 @@ class _CommentAreaState extends State<CommentArea> {
                           "docId": widget.parentId, // for path
                           "dutyId": widget.dutyId, // for name of comment-Doc
                           "parent": widget.comment['userId'],
+                          "country": widget.country,
+                          "city": widget.city,
                           "userId": widget.uid,
                           "comment": value
                         };
@@ -210,14 +217,13 @@ class _CommentAreaState extends State<CommentArea> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            _makeComment(context, _inputCommentReply, widget.dutyId).then((boolean) =>
-                            boolean
+                            _makeComment(context, _inputCommentReply, widget.dutyId).then((boolean) => boolean
                                 ? {
-                              _formKey.currentState!.reset(),
-                              setState(() {
-                                _showReplyBox = !_showReplyBox;
-                              })
-                            }
+                                    _formKey.currentState!.reset(),
+                                    setState(() {
+                                      _showReplyBox = !_showReplyBox;
+                                    })
+                                  }
                                 : "");
                           }
                         })),

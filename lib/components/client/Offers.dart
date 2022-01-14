@@ -28,14 +28,15 @@ class _OffersState extends State<Offers> {
     return FutureBuilder(
       future: _getOffers(context, widget.details),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if(!snapshot.hasError && snapshot.data != null) {
-        var offers = snapshot.data;
+        if (snapshot.data == 'empty') {
+          return Text("No offers made yet!", style: TextStyle(fontWeight: FontWeight.bold));
+        } else if (!snapshot.hasError && snapshot.data != null) {
+          var offers = snapshot.data;
           return ListView.builder(
               controller: _controllerOne,
               shrinkWrap: true,
               itemCount: offers.length,
-              itemBuilder: (context, i) =>
-                  Padding(
+              itemBuilder: (context, i) => Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: (Stack(
                       alignment: Alignment.center,
@@ -43,10 +44,7 @@ class _OffersState extends State<Offers> {
                         Align(
                           alignment: Alignment.topRight,
                           child: Container(
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.8,
+                            width: MediaQuery.of(context).size.width * 0.8,
                             decoration: BoxDecoration(
                               color: myTertiaryColor,
                               borderRadius: BorderRadius.circular(10.0),
@@ -61,11 +59,9 @@ class _OffersState extends State<Offers> {
                             child: Padding(
                               padding: const EdgeInsets.only(top: 5.0, left: 40),
                               child: InkWell(
-                                onTap: () =>
-                                (showDialog(
+                                onTap: () => (showDialog(
                                     context: context,
-                                    builder: (context) =>
-                                        AlertDialog(
+                                    builder: (context) => AlertDialog(
                                           title: Text("Long-presses to visit profile."),
                                         ))),
                                 onLongPress: () => print("duty long presses"),
@@ -127,66 +123,64 @@ class _OffersState extends State<Offers> {
                                     ),
                                     widget.details['status'] == 0
                                         ? Visibility(
-                                      visible: UserStorage.currentUserId == widget.details['uid'],
-                                      child: InkWell(
-                                        onTap: () async {
-                                          (showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  AlertDialog(
-                                                    title: Text("Accept offer, Confirm?"),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          jsonResponse =
-                                                          await http.post(Uri.parse('$API_URL/duty/assignDuty'),
-                                                              headers: <String, String>{
-                                                                'Content-Type':
-                                                                'application/json; charset=UTF-8',
+                                            visible: UserStorage.currentUserId == widget.details['uid'],
+                                            child: InkWell(
+                                              onTap: () async {
+                                                (showDialog(
+                                                    context: context,
+                                                    builder: (context) => AlertDialog(
+                                                          title: Text("Accept offer, Confirm?"),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () async {
+                                                                jsonResponse = await http.post(
+                                                                    Uri.parse('$API_URL/duty/assignDuty'),
+                                                                    headers: <String, String>{
+                                                                      'Content-Type': 'application/json; charset=UTF-8',
+                                                                    },
+                                                                    body: convert.jsonEncode({
+                                                                      "status": 1,
+                                                                      "workerId": offers[i]["offeredBy"],
+                                                                      "offeredMoney": offers[i]['offeredMoney'],
+                                                                      "city": widget.details['city'],
+                                                                      "country": widget.details['country'],
+                                                                      "docId": widget.details['docId'],
+                                                                    }));
+                                                                Navigator.pop(context);
+                                                                if (jsonResponse.statusCode == 200) {
+                                                                  Navigator.pop(context);
+                                                                  Provider.of<Helper>(context, listen: false)
+                                                                      .setStepperIndex(1);
+                                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                                      SnackBar(content: Text("Offer Accepted")));
+                                                                } else if (jsonResponse.statusCode == 400) {
+                                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                                      content: Text("Server: Something went wrong.")));
+                                                                } else {
+                                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                                      SnackBar(content: Text("Error Occurred")));
+                                                                }
                                                               },
-                                                              body: convert.jsonEncode({
-                                                                "status": 1,
-                                                                "workerId": offers[i]["offeredBy"],
-                                                                "offeredMoney": offers[i]['offeredMoney'],
-                                                                "city": widget.details['city'],
-                                                                "country": widget.details['country'],
-                                                                "docId": widget.details,
-                                                              }));
-                                                          Navigator.pop(context);
-                                                          if (jsonResponse.statusCode == 200) {
-                                                            Navigator.pop(context);
-                                                            Provider.of<Helper>(context, listen: false)
-                                                                .setStepperIndex(1);
-                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                SnackBar(content: Text("Offer Accepted")));
-                                                          } else if (jsonResponse.statusCode == 400) {
-                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                                content: Text("Server: Something went wrong.")));
-                                                          } else {
-                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                SnackBar(content: Text("Error Occurred")));
-                                                          }
-                                                        },
-                                                        child: Text("Accept!"),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () => Navigator.pop(context),
-                                                        child: Text("No"),
-                                                      ),
-                                                    ],
-                                                  )));
-                                        },
-                                        child: Container(
-                                            height: 30,
-                                            decoration: BoxDecoration(
-                                                color: Colors.green, borderRadius: BorderRadius.circular(10.0)),
-                                            child: Center(
-                                                child: Text(
-                                                  "Accept Offer ✓",
-                                                  style: TextStyle(color: Colors.white),
-                                                ))),
-                                      ),
-                                    )
+                                                              child: Text("Accept!"),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () => Navigator.pop(context),
+                                                              child: Text("No"),
+                                                            ),
+                                                          ],
+                                                        )));
+                                              },
+                                              child: Container(
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.green, borderRadius: BorderRadius.circular(10.0)),
+                                                  child: Center(
+                                                      child: Text(
+                                                    "Accept Offer ✓",
+                                                    style: TextStyle(color: Colors.white),
+                                                  ))),
+                                            ),
+                                          )
                                         : SizedBox()
                                   ],
                                 ),
@@ -204,7 +198,8 @@ class _OffersState extends State<Offers> {
                       ],
                     )),
                   ));
-        } else return CircularProgressIndicator();
+        } else
+          return CircularProgressIndicator();
       },
     );
   }
@@ -223,19 +218,22 @@ Future _getOffers(BuildContext context, dynamic details) async {
           "city": details['city'],
           "country": details['country'],
         }));
+    print(response.statusCode.toString());
     if (response.statusCode == 200) {
       jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
       return jsonResponse['result'];
     } else if (response.statusCode == 400) {
       jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonResponse['error'])));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error")));
       return null;
+    } else if (response.statusCode == 204) {
+      return 'empty';
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error while connecting to server ❌")));
       return null;
     }
   } catch (e) {
-    print('try catch error: $e');
+    print('try catch error _getOffers: $e');
     return null;
   }
 }
