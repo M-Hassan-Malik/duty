@@ -59,7 +59,6 @@ class _LoadDutyState extends State<LoadDuty> {
 
   Future _getDuties() async {
 
-    print("_getDuty");
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
       await provider.findCurrentLocation();
@@ -85,6 +84,9 @@ class _LoadDutyState extends State<LoadDuty> {
           return null;
         }
       }
+      else {
+        print("_getDuties ,city and country not found for API");
+      }
     } catch (e) {
       print("try caught: $e");
       return null;
@@ -92,8 +94,6 @@ class _LoadDutyState extends State<LoadDuty> {
   }
 
   Future _getMyDuties(BuildContext context) async {
-
-    print("My Duty");
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
       await provider.findCurrentLocation();
@@ -119,9 +119,11 @@ class _LoadDutyState extends State<LoadDuty> {
           _getStatusError(0,context);
           return null;
         }
+      } else {
+        print("_MY-Duties ,city and country not found for API");
       }
     } catch (e) {
-      print("try caught: $e");
+      print("try caught @loadDuties: $e");
       return null;
     }
   }

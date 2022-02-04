@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:duty/components/client/profile.dart';
 import 'package:duty/provider/helpers.dart';
 import 'package:duty/provider/url.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +24,6 @@ class _OffersState extends State<Offers> {
 
   @override
   Widget build(BuildContext context) {
-    final offers;
     var jsonResponse;
     return FutureBuilder(
       future: _getOffers(context, widget.details),
@@ -64,7 +64,11 @@ class _OffersState extends State<Offers> {
                                     builder: (context) => AlertDialog(
                                           title: Text("Long-presses to visit profile."),
                                         ))),
-                                onLongPress: () => print("duty long presses"),
+                                onLongPress: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(uidWithCityCountry: {
+                                  "uid" : widget.details['uid'],
+                                  "city" : widget.details['city'],
+                                  "country" : widget.details['country'],
+                                }))),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -90,10 +94,7 @@ class _OffersState extends State<Offers> {
                                               SizedBox(
                                                 width: 100.0,
                                                 child: Text("${offers[i]["offeredMoney"]}",
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 15.0,
-                                                        overflow: TextOverflow.fade)),
+                                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0, overflow: TextOverflow.fade)),
                                               ),
                                               Row(children: [
                                                 Text("Rating: "),
@@ -109,8 +110,7 @@ class _OffersState extends State<Offers> {
                                             children: [
                                               Text("Yesterday", style: TextStyle(fontSize: 8.0)),
                                               Container(
-                                                  decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10.0), color: Colors.green),
+                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: Colors.green),
                                                   child: Padding(
                                                     padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 3.0),
                                                     child: Text("100%", style: TextStyle(fontSize: 8.0)),
@@ -133,8 +133,7 @@ class _OffersState extends State<Offers> {
                                                           actions: [
                                                             TextButton(
                                                               onPressed: () async {
-                                                                jsonResponse = await http.post(
-                                                                    Uri.parse('$API_URL/duty/assignDuty'),
+                                                                jsonResponse = await http.post(Uri.parse('$API_URL/duty/assignDuty'),
                                                                     headers: <String, String>{
                                                                       'Content-Type': 'application/json; charset=UTF-8',
                                                                     },
@@ -149,16 +148,15 @@ class _OffersState extends State<Offers> {
                                                                 Navigator.pop(context);
                                                                 if (jsonResponse.statusCode == 200) {
                                                                   Navigator.pop(context);
-                                                                  Provider.of<Helper>(context, listen: false)
-                                                                      .setStepperIndex(1);
-                                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                                      SnackBar(content: Text("Offer Accepted")));
+                                                                  Provider.of<Helper>(context, listen: false).setStepperIndex(1);
+                                                                  ScaffoldMessenger.of(context)
+                                                                      .showSnackBar(SnackBar(content: Text("Offer Accepted")));
                                                                 } else if (jsonResponse.statusCode == 400) {
-                                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                                      content: Text("Server: Something went wrong.")));
+                                                                  ScaffoldMessenger.of(context)
+                                                                      .showSnackBar(SnackBar(content: Text("Server: Something went wrong.")));
                                                                 } else {
-                                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                                      SnackBar(content: Text("Error Occurred")));
+                                                                  ScaffoldMessenger.of(context)
+                                                                      .showSnackBar(SnackBar(content: Text("Error Occurred")));
                                                                 }
                                                               },
                                                               child: Text("Accept!"),
@@ -172,8 +170,7 @@ class _OffersState extends State<Offers> {
                                               },
                                               child: Container(
                                                   height: 30,
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.green, borderRadius: BorderRadius.circular(10.0)),
+                                                  decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10.0)),
                                                   child: Center(
                                                       child: Text(
                                                     "Accept Offer ✓",

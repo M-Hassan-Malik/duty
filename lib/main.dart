@@ -1,3 +1,4 @@
+import 'package:duty/components/client/profile.dart';
 import 'package:duty/components/registration/OTP.dart';
 import 'package:duty/components/registration/registration_area.dart';
 import 'package:duty/provider/helpers.dart';
@@ -44,12 +45,11 @@ class MyHomePage extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return SafeArea(
-      child: (Scaffold(
-        backgroundColor: mySecondaryColor,
-        body: LandingPage(),
+      return Scaffold(
+      backgroundColor: mySecondaryColor,
+      //body: Profile(uidWithLocation: {}),
+      body: LandingPage(),
 
-      )),
     );
   }
 }

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 List<Map<String,String>> arrayWidgets = [
   {"path": "assets/images/ac.png", "name": "Air Condition"},
   {"path": "assets/images/carpenter.png", "name": "Carpenter"},
