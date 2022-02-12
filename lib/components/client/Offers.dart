@@ -64,11 +64,14 @@ class _OffersState extends State<Offers> {
                                     builder: (context) => AlertDialog(
                                           title: Text("Long-presses to visit profile."),
                                         ))),
-                                onLongPress: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(uidWithCityCountry: {
-                                  "uid" : widget.details['uid'],
-                                  "city" : widget.details['city'],
-                                  "country" : widget.details['country'],
-                                }))),
+                                onLongPress: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Profile(uidWithCityCountry: {
+                                              "uid": widget.details['uid'],
+                                              "city": widget.details['city'],
+                                              "country": widget.details['country'],
+                                            }))),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[

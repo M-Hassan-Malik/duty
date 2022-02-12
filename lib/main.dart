@@ -45,7 +45,7 @@ class MyHomePage extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-      return Scaffold(
+    return Scaffold(
       backgroundColor: mySecondaryColor,
       //body: Profile(uidWithLocation: {}),
       body: LandingPage(),
