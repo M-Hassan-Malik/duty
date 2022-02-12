@@ -20,7 +20,6 @@ Future main() async {
     providers: [
       ChangeNotifierProvider<GoogleSignInProvider>(create: (_) => GoogleSignInProvider()),
       ChangeNotifierProvider<GoogleAddressProvider>(create: (_) => GoogleAddressProvider()),
-      ChangeNotifierProvider<StepperProviderLocation>(create: (_) => StepperProviderLocation()),
       ChangeNotifierProvider<StepperProviderContinuity>(create: (_) => StepperProviderContinuity()),
       ChangeNotifierProvider<OTPProvider>(create: (_) => OTPProvider()),
       ChangeNotifierProvider<Helper>(create: (_) => Helper()),
@@ -45,7 +44,7 @@ class MyHomePage extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return Scaffold(
+      return Scaffold(
       backgroundColor: mySecondaryColor,
       //body: Profile(uidWithLocation: {}),
       body: LandingPage(),

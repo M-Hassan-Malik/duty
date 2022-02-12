@@ -1,62 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-
+import 'package:duty/provider/stepper/StepperProvider_main.dart';
 
 class GoogleAddressProvider extends ChangeNotifier {
-  String? _locality;
-  Address? _first;
+  Placemark? _first;
+  Position? _position;
+  bool onlineDuty = false;
+
+  Position? get getPosition => _position ??= null;
 
   Map<String, String?>? getFullAddress() {
     if (_first == null) {
       return {"address": 'not found'};
     } else {
-      return {"address": _first!.addressLine,
-        "city": _first!.subAdminArea,
-        "country": _first!.countryName,
-
+      var detailedAddress =
+          "${_first!.street.toString() + ", " + _first!.subLocality.toString() + ", " + _first!.locality.toString() + ", " + _first!.subAdministrativeArea.toString() + ", " + _first!.administrativeArea.toString() + ", " + _first!.country.toString() + "."}";
+      DataHolder.dataHolder["address"] = detailedAddress;
+      return {
+        "address": detailedAddress,
+        "city": _first!.subAdministrativeArea,
+        "country": _first!.country,
       };
     }
   }
 
-  String getLocality() {
-    if (_locality == null) {
-      return "Press Again";
-    } else {
-      return _locality!;
+  void getCurrentAddress() async {
+    _position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    getCoordinatesFromPositionB(_position!.latitude, _position!.longitude);
+    notifyListeners();
+  }
+
+  void getCoordinatesFromPositionB(double lat, double lng) async {
+    List<Placemark> placeMarks = await placemarkFromCoordinates(lat, lng);
+    try {
+      _first = placeMarks.first;
+      notifyListeners();
+    } catch (e) {
+      print("catch-block @getCoordinatesFromPosition: ${e.toString()}");
     }
   }
 
   findCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-    getCoordinatesFromPosition(Coordinates(position.latitude, position.longitude));
     print(position.toString());
+    //getCoordinatesFromPositionB(Coordinates(position.latitude, position.longitude));
     notifyListeners();
-  }
-
-  getCoordinatesFromPosition(Coordinates coords) async {
-//    getCoordinatesFromPositionB(coords);
-    var address = await Geocoder.local.findAddressesFromCoordinates(coords);
-    _first = address.first;
-    _locality = _first?.subAdminArea;
-    notifyListeners();
-  }
-
-  getCoordinatesFromPositionB(Coordinates coords) async {
-    List<Placemark> placeMarks = await placemarkFromCoordinates(coords.latitude, coords.longitude);
-    try{
-      print(placeMarks.first.locality);
-      print(placeMarks.first.subLocality);
-      print(placeMarks.first.administrativeArea);
-      print(placeMarks.first.subAdministrativeArea);
-      print(placeMarks.first.country);
-      print(placeMarks.first.street);
-      print(placeMarks.first.thoroughfare);
-      print(placeMarks.first.name);
-      notifyListeners();
-    }catch(e){
-      print("catch-block @getCoordinatesFromPosition: ${e.toString()}");
-    }
   }
 }

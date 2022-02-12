@@ -1,4 +1,5 @@
 import 'package:duty/components/storage.dart';
+import 'package:duty/provider/GoogleAddressProvider.dart';
 import 'package:duty/provider/stepper/StepperProvider_2.dart';
 import 'package:duty/provider/url.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ class StepperProviderContinuity extends ChangeNotifier {
   bool visibility = false;
   Future<bool> addTask(BuildContext context) async {
     visibility = true;
-    var locationAddress = Provider.of<StepperProviderLocation>(context, listen: false).getFullAddress()!;
+    var locationAddress = Provider.of<GoogleAddressProvider>(context, listen: false).getFullAddress()!;
     var jsonResponse = new Map<String, dynamic>();
     DataHolder.dataHolder['uid'] = UserStorage.currentUserId;
     DataHolder.dataHolder['city'] = locationAddress['city'];

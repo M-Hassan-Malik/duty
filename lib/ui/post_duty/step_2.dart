@@ -1,10 +1,8 @@
+import 'package:duty/provider/GoogleAddressProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:duty/provider/stepper/StepperProvider_main.dart';
-import 'package:duty/provider/stepper/StepperProvider_2.dart';
 import 'package:duty/theme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 
 class LocationAndTime extends StatefulWidget {
@@ -36,7 +34,7 @@ class _LocationAndTimeState extends State<LocationAndTime> {
 
   setContinuityTrue() => Provider.of<StepperProviderContinuity>(context, listen: false).setContinuityTrue();
 
-  void _setLocationButton(value) {
+  /*void _setLocationButton(value) {
     var pos = null;
     pos = value.position;
     if (pos != null) {
@@ -46,20 +44,19 @@ class _LocationAndTimeState extends State<LocationAndTime> {
       };
       value.getCoordinatesFromPosition(Coordinates(pos.latitude, pos.longitude));
       updateDisableColor(0);
-      value.updateAddress = true;
+      value.onlineDuty = true;
       setContinuityTrue();
       DataHolder.dataHolder["place"] = latLng;
     } else
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Re-tap on Location button, Please. Cannot get your location.")));
-  }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Re-tap on Location button, Please. Cannot get your location.")));
+  }*/
 
   DateTime selectedDate = DateTime.now();
   DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context, initialDate: selectedDate, firstDate: DateTime(2021, 4), lastDate: DateTime(2101));
+    final DateTime? picked =
+        await showDatePicker(context: context, initialDate: selectedDate, firstDate: DateTime(2021, 4), lastDate: DateTime(2101));
 
     if (picked != null && picked != selectedDate) {
       setState(() {
@@ -72,7 +69,7 @@ class _LocationAndTimeState extends State<LocationAndTime> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StepperProviderLocation>(builder: (context, value, child) {
+    return Consumer<GoogleAddressProvider>(builder: (context, value, child) {
       return Column(children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,29 +79,22 @@ class _LocationAndTimeState extends State<LocationAndTime> {
               child: InkWell(
                 onTap: () {
                   value.getCurrentAddress();
-                  var pos = null;
-                  pos = value.position;
-                  if (pos == null) {
-                    Future.delayed(const Duration(milliseconds: 5000), () {
-                      _setLocationButton(value);
-                    });
-                  } else {
+                  var pos = value.getPosition;
+                  if(pos != null) {
                     latLng = {
                       "lat": pos.latitude,
                       "lng": pos.longitude,
                     };
-                    value.getCoordinatesFromPosition(Coordinates(pos.latitude, pos.longitude));
+                    value.getCoordinatesFromPositionB(pos.latitude, pos.longitude);
                     updateDisableColor(0);
-                    value.updateAddress = true;
+                    value.onlineDuty = true;
                     setContinuityTrue();
                     DataHolder.dataHolder["place"] = latLng;
                   }
                 },
                 child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(color: Colors.black),
-                      color: locationButton),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10.0), border: Border.all(color: Colors.black), color: locationButton),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -124,16 +114,13 @@ class _LocationAndTimeState extends State<LocationAndTime> {
               child: InkWell(
                 onTap: () {
                   updateDisableColor(1);
-                  value.updateAddress = false;
+                  value.onlineDuty = false;
                   setContinuityTrue();
                   DataHolder.dataHolder['address'] = "online";
                   _msgBox = "The duty is Online";
                 },
                 child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(color: Colors.black),
-                      color: onlineButton),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), border: Border.all(color: Colors.black), color: onlineButton),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -152,12 +139,12 @@ class _LocationAndTimeState extends State<LocationAndTime> {
             )
           ],
         ),
-        Container(
+         Container(
           margin: const EdgeInsets.only(top: 15.0, bottom: 10),
           padding: const EdgeInsets.all(15.0),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: myPrimaryColor),
           child: Text(
-            value.updateAddress ? '${value.getAddress()}' : _msgBox,
+            value.onlineDuty ? '${value.getFullAddress()!['address']}' : _msgBox,
             style: TextStyle(color: mySecondaryColor),
           ),
         ),
