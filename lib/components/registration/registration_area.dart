@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duty/components/registration/regFields.dart';
 import 'package:duty/provider/GoogleAddressProvider.dart';
-import 'package:duty/provider/SignInProvider.dart';
-import 'package:duty/provider/SignInProvider.dart';
+
 import 'package:duty/provider/url.dart';
-import 'package:duty/ui/home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -58,11 +55,7 @@ class _RegistrationTextFormState extends State<RegistrationTextForm> {
                   ),
                   Text(
                     "Registration",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue, decoration: TextDecoration.underline),
                   ),
                   SizedBox(height: 5),
                   getTextFormField("Name"),
@@ -131,8 +124,7 @@ class _RegistrationTextFormState extends State<RegistrationTextForm> {
                             var jsonResponse = Map<String, dynamic>();
                             if (_formKey.currentState!.validate()) {
                               Provider.of<GoogleAddressProvider>(context, listen: false).findCurrentLocation();
-                              locationAddress =
-                                  Provider.of<GoogleAddressProvider>(context, listen: false).getFullAddress()!;
+                              locationAddress = Provider.of<GoogleAddressProvider>(context, listen: false).getFullAddress()!;
                               body = {
                                 "name": RegFields.userFields['name'],
                                 "email": RegFields.userFields['email'],
@@ -149,12 +141,10 @@ class _RegistrationTextFormState extends State<RegistrationTextForm> {
                                     else if (response.statusCode == 400)
                                       {
                                         jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>,
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(content: Text(jsonResponse['error'].toString()))),
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(jsonResponse['error'].toString()))),
                                       }
                                     else
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(content: Text("Error Occurred")))
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")))
                                   });
 
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Processing...")));
@@ -165,9 +155,7 @@ class _RegistrationTextFormState extends State<RegistrationTextForm> {
                           style: ElevatedButton.styleFrom(primary: Colors.blue, onPrimary: Colors.white)),
                     ),
                   ),
-                  TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/loginRoute'),
-                      child: Text("Already have an account!"))
+                  TextButton(onPressed: () => Navigator.pushNamed(context, '/loginRoute'), child: Text("Already have an account!"))
                 ],
               ),
             ),
@@ -184,9 +172,7 @@ Widget getTextFormField(String str) {
         switch (str) {
           case "Name":
             {
-              if (value == null ||
-                  value.isEmpty &&
-                      !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+              if (value == null || value.isEmpty && !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
                 return 'Please enter valid name';
               }
               RegFields.userFields['name'] = value;

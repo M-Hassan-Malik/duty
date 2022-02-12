@@ -1,4 +1,4 @@
-import 'package:duty/components/client/profile.dart';
+
 import 'package:duty/components/registration/OTP.dart';
 import 'package:duty/components/registration/registration_area.dart';
 import 'package:duty/provider/helpers.dart';
@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:duty/provider/GoogleAddressProvider.dart';
 import 'package:duty/provider/SignInProvider.dart';
 import 'package:duty/provider/stepper/StepperProvider_main.dart';
-import 'package:duty/provider/stepper/StepperProvider_2.dart';
 import 'package:duty/ui/logging_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

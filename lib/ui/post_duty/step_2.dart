@@ -34,22 +34,21 @@ class _LocationAndTimeState extends State<LocationAndTime> {
 
   setContinuityTrue() => Provider.of<StepperProviderContinuity>(context, listen: false).setContinuityTrue();
 
-  /*void _setLocationButton(value) {
-    var pos = null;
-    pos = value.position;
+  void _setLocationButton(GoogleAddressProvider value) {
+    var pos = value.getPosition;
     if (pos != null) {
       latLng = {
         "lat": pos.latitude,
         "lng": pos.longitude,
       };
-      value.getCoordinatesFromPosition(Coordinates(pos.latitude, pos.longitude));
+      value.getCoordinatesFromPositionB(pos.latitude, pos.longitude);
       updateDisableColor(0);
       value.onlineDuty = true;
       setContinuityTrue();
       DataHolder.dataHolder["place"] = latLng;
     } else
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Re-tap on Location button, Please. Cannot get your location.")));
-  }*/
+  }
 
   DateTime selectedDate = DateTime.now();
   DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
@@ -79,18 +78,7 @@ class _LocationAndTimeState extends State<LocationAndTime> {
               child: InkWell(
                 onTap: () {
                   value.getCurrentAddress();
-                  var pos = value.getPosition;
-                  if(pos != null) {
-                    latLng = {
-                      "lat": pos.latitude,
-                      "lng": pos.longitude,
-                    };
-                    value.getCoordinatesFromPositionB(pos.latitude, pos.longitude);
-                    updateDisableColor(0);
-                    value.onlineDuty = true;
-                    setContinuityTrue();
-                    DataHolder.dataHolder["place"] = latLng;
-                  }
+                  _setLocationButton(value);
                 },
                 child: Container(
                   decoration:
