@@ -1,8 +1,9 @@
+import 'package:duty/components/client/loadDuties.dart';
+import 'package:duty/components/client/postDty.dart';
 import 'package:duty/components/storage.dart';
 import 'package:duty/provider/SignInProvider.dart';
 import 'package:duty/provider/helpers.dart';
 import 'package:duty/theme.dart';
-import 'package:duty/ui/widget_list.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -17,11 +18,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
-    var _provider =Provider.of<Helper>(context, listen: true);
-  int _selectedIndex =  _provider.getStepperIndex;
+    var _provider = Provider.of<Helper>(context, listen: true);
+    int _selectedIndex = _provider.getStepperIndex;
     UserStorage.currentUserId = widget.uid;
     final _uid = widget.uid;
     DateTime timeBackedPressed = DateTime.now();
@@ -41,41 +41,91 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             backgroundColor: myPrimaryColor,
             title: Text(_uid == null ? "User is null" : _uid),
-
             leading: IconButton(
                 onPressed: () {
                   FirebaseAuthenticationProvider().signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
                 },
                 icon: Icon(FontAwesomeIcons.signOutAlt)),
-
           ),
           body: Container(
-            child: getCurrentScreen(_selectedIndex),
-          ),
+              child: _provider.getUserType == 'customer' ? getCurrentScreenForCustomer(_selectedIndex) : getCurrentScreenForWorker(_selectedIndex)),
           bottomNavigationBar: new Theme(
-            data: Theme.of(context).copyWith(
-              canvasColor: myPrimaryColor,
-            ),
-            child: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.searchDollar), label: "Find Jobs"),
-                BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.tasks), label: "My Duties"),
-                BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.home), label: "Post Duty"),
-                BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.envelope), label: "Messages"),
-                BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.sitemap), label: "Option"),
-              ],
-              unselectedItemColor: Colors.black,
-              selectedItemColor: mySecondaryColor,
-              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-              currentIndex: _selectedIndex,
-              onTap: (index) {
-                setState(() {
-                  _provider.setStepperIndex(index);
-                });
-              },
-            ),
-          )),
+              data: Theme.of(context).copyWith(
+                canvasColor: myPrimaryColor,
+              ),
+              child: _provider.getUserType == 'customer'
+                  ? BottomNavigationBar(
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.tasks), label: "My Duties"),
+                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.home), label: "Post Duty"),
+                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.envelope), label: "Messages"),
+                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.sitemap), label: "Option"),
+                      ],
+                      unselectedItemColor: Colors.black,
+                      selectedItemColor: mySecondaryColor,
+                      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+                      currentIndex: _selectedIndex,
+                      onTap: (index) {
+                        setState(() {
+                          _provider.setStepperIndex(index);
+                        });
+                      },
+                    )
+                  : BottomNavigationBar(
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.searchDollar), label: "Find Jobs"),
+                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.envelope), label: "Messages"),
+                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.sitemap), label: "Option"),
+                      ],
+                      unselectedItemColor: Colors.black,
+                      selectedItemColor: mySecondaryColor,
+                      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+                      currentIndex: _selectedIndex,
+                      onTap: (index) {
+                        setState(() {
+                          _provider.setStepperIndex(index);
+                        });
+                      },
+                    ))),
     );
+  }
+}
+
+Widget getCurrentScreenForCustomer(int index) {
+  switch (index) {
+    case 0:
+      {
+        return LoadDuty(myDuty: true);
+      }
+    case 1:
+      {
+        return PostDuty();
+      }
+    case 2:
+      {
+        return Text('Messages');
+      }
+    default:
+      {
+        return Text('Options');
+      }
+  }
+}
+
+Widget getCurrentScreenForWorker(int index) {
+  switch (index) {
+    case 0:
+      {
+        return LoadDuty(myDuty: false);
+      }
+    case 1:
+      {
+        return Text('Messages');
+      }
+    default:
+      {
+        return Text('Options');
+      }
   }
 }

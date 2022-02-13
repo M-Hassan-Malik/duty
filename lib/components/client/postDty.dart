@@ -1,33 +1,8 @@
-import 'package:duty/theme.dart';
-import 'package:duty/components/client/loadDuties.dart';
 import 'package:duty/ui/post_duty/post_duty.dart';
 import 'package:flutter/material.dart';
-import '../components/GirdViewList.dart';
 
-Widget? getCurrentScreen(int index) {
-  switch (index) {
-    case 0:
-      {
-        return LoadDuty(myDuty: false); // Find Duties
-      }
-    case 1:
-      {
-        return LoadDuty(myDuty: true); // My Duties
-      }
-    case 2:
-      {
-        return PostDuty();
-      }
-    case 3:
-      {
-        return Text('Messages');
-      }
-    default:
-      {
-        return Text('Options');
-      }
-  }
-}
+import '../../theme.dart';
+import '../GirdViewList.dart';
 
 class PostDuty extends StatelessWidget {
   const PostDuty({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Helper extends ChangeNotifier{
-  int stepperIndex = 2;
+  int stepperIndex = 1;
   String _userType = "";
   int get getStepperIndex => stepperIndex;
   String get getUserType => _userType;
@@ -12,8 +12,10 @@ class Helper extends ChangeNotifier{
   }
 
   void setUserType (int userType){
-    userType == 1 ? _userType = 'customer'  :  _userType = 'worker';
+    userType == 0 ? _userType = 'customer'  :  _userType = 'worker';
+    userType == 0 ? stepperIndex = 1  :   stepperIndex = 0;
     notifyListeners();
   }
+
 
 }

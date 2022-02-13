@@ -11,7 +11,7 @@ Padding getFirstRow(int? status, BuildContext context) {
     padding: const EdgeInsets.only(top: 15.0, right: 2.0, left: 2.0),
     child: Container(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Text("Available",
               style: TextStyle(

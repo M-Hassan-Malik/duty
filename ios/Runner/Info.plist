@@ -41,9 +41,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Always and when in use!</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Device needs to access your mobile location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Device needs to access your mobile location</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+    <string>Can I haz location always?</string>
 </dict>
 </plist>

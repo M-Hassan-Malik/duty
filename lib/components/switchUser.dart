@@ -3,6 +3,7 @@ import 'package:duty/theme.dart';
 import 'package:duty/ui/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SwitchUser extends StatelessWidget {
   final uid;
@@ -11,16 +12,24 @@ class SwitchUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    checkPermissions() async {
+      var pl = await Permission.location.status;
+      print('Location per => $pl');
+      if (pl.isDenied == true) {
+        await Permission.location.request();
+      }
+    }
+
     var mediaQuerySize = MediaQuery.of(context).size;
     var _provider = Provider.of<Helper>(context, listen: false);
     return Container(
-      height: mediaQuerySize.height * 1,
       width: mediaQuerySize.width * 1,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           InkWell(
               onTap: () {
+                checkPermissions();
                 _provider.setUserType(0);// 0 => customer
                 Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(uid: uid)));
               },
@@ -33,7 +42,8 @@ class SwitchUser extends StatelessWidget {
           SizedBox(height: 10.0),
           InkWell(
               onTap: () {
-                _provider.setUserType(1);//1 => worker
+                checkPermissions();
+                _provider.setUserType(1); //1 => worker
                 Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(uid: uid)));
               },
               child: getContainer({
