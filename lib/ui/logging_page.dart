@@ -1,4 +1,5 @@
 import 'package:duty/components/storage.dart';
+import 'package:duty/components/switchUser.dart';
 import 'package:duty/theme.dart';
 import 'package:duty/ui/home_page.dart';
 import 'package:duty/ui/login_page.dart';
@@ -17,7 +18,8 @@ class LandingPage extends StatelessWidget {
             color: myPrimaryColor,
           ));
         } else if (snapshot.hasData) {
-          return HomePage(uid: snapshot.data);
+          return SwitchUser(uid: snapshot.data);
+        //  return HomePage(uid: snapshot.data);
         } else if (snapshot.hasError) {
           return Login();
         } else {

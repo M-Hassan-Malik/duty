@@ -25,13 +25,13 @@ class GoogleAddressProvider extends ChangeNotifier {
     }
   }
 
-  void getCurrentAddress() async {
+  getCurrentAddress() async {
     _position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    getCoordinatesFromPositionB(_position!.latitude, _position!.longitude);
+    await getCoordinatesFromPositionB(_position!.latitude, _position!.longitude);
     notifyListeners();
   }
 
-  void getCoordinatesFromPositionB(double lat, double lng) async {
+  getCoordinatesFromPositionB(double lat, double lng) async {
     List<Placemark> placeMarks = await placemarkFromCoordinates(lat, lng);
     try {
       _first = placeMarks.first;
@@ -39,12 +39,5 @@ class GoogleAddressProvider extends ChangeNotifier {
     } catch (e) {
       print("catch-block @getCoordinatesFromPosition: ${e.toString()}");
     }
-  }
-
-  findCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-    print(position.toString());
-    //getCoordinatesFromPositionB(Coordinates(position.latitude, position.longitude));
-    notifyListeners();
   }
 }

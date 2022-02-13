@@ -41,12 +41,14 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             backgroundColor: myPrimaryColor,
             title: Text(_uid == null ? "User is null" : _uid),
+
             leading: IconButton(
                 onPressed: () {
                   FirebaseAuthenticationProvider().signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
                 },
                 icon: Icon(FontAwesomeIcons.signOutAlt)),
+
           ),
           body: Container(
             child: getCurrentScreen(_selectedIndex),

@@ -36,7 +36,7 @@ class _GetFullDetailsOfDutyState extends State<GetFullDetailsOfDuty> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                getFirstRow(_status),
+                getFirstRow(_status,context),
                 SizedBox(height: 20.0),
                 getClientCard(context, doc['duty']),
                 SizedBox(height: 15.0),

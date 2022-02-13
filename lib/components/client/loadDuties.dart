@@ -61,7 +61,7 @@ class _LoadDutyState extends State<LoadDuty> {
 
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
-      await provider.findCurrentLocation();
+      await provider.getCurrentAddress();
       Map<String, String?>? locationAddress = await provider.getFullAddress()!;
       if (locationAddress['city'] != null && locationAddress['country'] != null) {
         print("$API_URL : ${locationAddress.toString()}");
@@ -96,7 +96,7 @@ class _LoadDutyState extends State<LoadDuty> {
   Future _getMyDuties(BuildContext context) async {
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
-      await provider.findCurrentLocation();
+      await provider.getCurrentAddress();
       Map<String, String?>? locationAddress = await provider.getFullAddress()!;
       if (locationAddress['city'] != null && locationAddress['country'] != null) {
         print("$API_URL : ${locationAddress.toString()}");
