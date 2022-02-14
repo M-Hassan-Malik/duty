@@ -1,5 +1,6 @@
 import 'package:duty/components/client/loadDuties.dart';
-import 'package:duty/components/client/postDty.dart';
+import 'package:duty/components/client/options.dart';
+import 'package:duty/components/client/postDuty.dart';
 import 'package:duty/components/storage.dart';
 import 'package:duty/provider/SignInProvider.dart';
 import 'package:duty/provider/helpers.dart';
@@ -56,38 +57,37 @@ class _HomePageState extends State<HomePage> {
               ),
               child: _provider.getUserType == 'customer'
                   ? BottomNavigationBar(
-                      items: const <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.tasks), label: "My Duties"),
-                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.home), label: "Post Duty"),
-                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.envelope), label: "Messages"),
-                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.sitemap), label: "Option"),
-                      ],
-                      unselectedItemColor: Colors.black,
-                      selectedItemColor: mySecondaryColor,
-                      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-                      currentIndex: _selectedIndex,
-                      onTap: (index) {
-                        setState(() {
-                          _provider.setStepperIndex(index);
-                        });
-                      },
-                    )
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.tasks), label: "My Duties"),
+                  BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.home), label: "Post Duty"),
+                  BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.envelope), label: "Messages"),
+                  BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.sitemap), label: "Option"),
+                ],
+                unselectedItemColor: Colors.black,
+                selectedItemColor: mySecondaryColor,
+                selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                currentIndex: _selectedIndex,
+                onTap: (index) {
+                  setState(() {
+                    _provider.setStepperIndex(index);
+                  });
+                },
+              )
                   : BottomNavigationBar(
-                      items: const <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.searchDollar), label: "Find Jobs"),
-                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.envelope), label: "Messages"),
-                        BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.sitemap), label: "Option"),
-                      ],
-                      unselectedItemColor: Colors.black,
-                      selectedItemColor: mySecondaryColor,
-                      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-                      currentIndex: _selectedIndex,
-                      onTap: (index) {
-                        setState(() {
-                          _provider.setStepperIndex(index);
-                        });
-                      },
-                    ))),
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.searchDollar), label: "Find Jobs"),
+                  BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.envelope), label: "Messages"),
+                  BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.sitemap), label: "Option"),
+                ],
+                selectedItemColor: mySecondaryColor,
+                selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                currentIndex: _selectedIndex,
+                onTap: (index) {
+                  setState(() {
+                    _provider.setStepperIndex(index);
+                  });
+                },
+              ))),
     );
   }
 }
@@ -108,7 +108,7 @@ Widget getCurrentScreenForCustomer(int index) {
       }
     default:
       {
-        return Text('Options');
+        return Options();
       }
   }
 }
@@ -125,7 +125,7 @@ Widget getCurrentScreenForWorker(int index) {
       }
     default:
       {
-        return Text('Options');
+        return Options();
       }
   }
 }

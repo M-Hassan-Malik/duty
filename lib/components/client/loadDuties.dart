@@ -18,20 +18,17 @@ class LoadDuty extends StatefulWidget {
 }
 
 class _LoadDutyState extends State<LoadDuty> {
-    var response;
+  var data;
+  var response;
 
-  _getStatusError(int responseCode,BuildContext context) {
-    responseCode == 400 ?
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("response.statusCode:400: Error Occurred"))) :
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")));
+  _getStatusError(int responseCode, BuildContext context) {
+    responseCode == 400
+        ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("response.statusCode:400: Error Occurred")))
+        : ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error Occurred")));
   }
 
   late ScrollController _chatScrollController;
-  int _perPage = 10,
-      _increment = 10;
-  String userCurrent = "";
-  var data;
+  int _perPage = 10, _increment = 10;
 
   void initState() {
     _chatScrollController = ScrollController()
@@ -58,42 +55,37 @@ class _LoadDutyState extends State<LoadDuty> {
   }
 
   Future _getDuties() async {
-
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
       await provider.getCurrentAddress();
       Map<String, String?>? locationAddress = await provider.getFullAddress()!;
-      if (locationAddress['city'] != null && locationAddress['country'] != null) {
-        print("$API_URL : ${locationAddress.toString()}");
+      print("$API_URL : ${locationAddress.toString()}");
         response = await http.post(Uri.parse('$API_URL/duty/getDuty'),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
             body: convert.jsonEncode({
-              "city" :locationAddress['city'],
-              "country" :locationAddress['country'],
+              "city": locationAddress['city'],
+              "country": locationAddress['country'],
             }));
         if (response.statusCode == 200) {
           var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
           return result;
         } else if (response.statusCode == 400) {
-          _getStatusError(400,context);
+          _getStatusError(400, context);
           return null;
         } else {
-          _getStatusError(0,context);
+          _getStatusError(0, context);
           return null;
         }
-      }
-      else {
-        print("_getDuties ,city and country not found for API");
-      }
+
     } catch (e) {
       print("try caught: $e");
       return null;
     }
   }
 
-  Future _getMyDuties(BuildContext context) async {
+  Future _getMyDuties() async {
     try {
       var provider = Provider.of<GoogleAddressProvider>(context, listen: false);
       await provider.getCurrentAddress();
@@ -105,18 +97,18 @@ class _LoadDutyState extends State<LoadDuty> {
               'Content-Type': 'application/json; charset=UTF-8',
             },
             body: convert.jsonEncode({
-              "uid" : UserStorage.currentUserId,
-              "city" :locationAddress['city'],
-              "country" :locationAddress['country'],
+              "uid": UserStorage.currentUserId,
+              "city": locationAddress['city'],
+              "country": locationAddress['country'],
             }));
         if (response.statusCode == 200) {
           var result = convert.jsonDecode(response.body) as Map<String, dynamic>;
           return result;
         } else if (response.statusCode == 400) {
-          _getStatusError(400,context);
+          _getStatusError(400, context);
           return null;
         } else {
-          _getStatusError(0,context);
+          _getStatusError(0, context);
           return null;
         }
       } else {
@@ -130,27 +122,23 @@ class _LoadDutyState extends State<LoadDuty> {
 
   @override
   Widget build(BuildContext context) {
-    userCurrent = UserStorage.currentUserId;
     return Scaffold(
-
-    body: FutureBuilder(
-          future: widget.myDuty ? _getMyDuties(context) : _getDuties(),
+      body: FutureBuilder(
+          future: widget.myDuty ? _getMyDuties() : _getDuties(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasError && snapshot.data != null) {
               data = snapshot.data['result'];
               return ListView.builder(
-                  controller: _chatScrollController,
+              // controller: _chatScrollController,
+                  shrinkWrap: true,
                   itemCount: data.length,
                   itemBuilder: (context, i) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 5.0, top: 8.0),
                       child: InkWell(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        GetFullDetailsOfDuty(doc: data[i]['docData'], docId: data[i]['docId'])));
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => GetFullDetailsOfDuty(doc: data[i]['docData'], docId: data[i]['docId'])));
                           },
                           child: Stack(
                             alignment: Alignment.center,
@@ -158,10 +146,7 @@ class _LoadDutyState extends State<LoadDuty> {
                               Align(
                                 alignment: Alignment.topRight,
                                 child: Container(
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width * 0.8,
+                                  width: MediaQuery.of(context).size.width * 0.8,
                                   decoration: BoxDecoration(
                                     color: myTertiaryColor,
                                     borderRadius: BorderRadius.circular(10.0),
@@ -180,12 +165,9 @@ class _LoadDutyState extends State<LoadDuty> {
                                       children: <Widget>[
                                         Center(
                                             child: Text(
-                                              data[i]['docData']['duty']['title'],
-                                              style: TextStyle(
-                                                  overflow: TextOverflow.ellipsis,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: myPrimaryColor),
-                                            )),
+                                          data[i]['docData']['duty']['title'],
+                                          style: TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold, color: myPrimaryColor),
+                                        )),
                                         Row(
                                           children: [
                                             Icon(
@@ -206,19 +188,14 @@ class _LoadDutyState extends State<LoadDuty> {
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text("2 Offers", style: TextStyle(fontSize: 8)),
-                                                  Text("3 Comments", style: TextStyle(fontSize: 8)),
-                                                ],
-                                              ),
-                                              SizedBox(width: 1),
+                                              Text(
+                                                  "Status: ${data[i]['docData']['status'] == null ? "Offer Open"
+                                                      : data[i]['docData']?['status']?['status'] == 1 ? "Assigned"
+                                                      : data[i]['docData']?['status']?['status'] == 2 ? "Complete"
+                                                      : "Reviewed" }",
+                                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                                               Flexible(
-                                                child: Text(
-                                                    "Payment: " +
-                                                        data[i]['docData']['duty']['payment'].toString() +
-                                                        "/-",
+                                                child: Text("Payment: " + data[i]['docData']['duty']['payment'].toString() + "/-",
                                                     style: TextStyle(fontSize: 15.0)),
                                               ),
                                             ],

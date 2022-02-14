@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Color get myPrimaryColor => Color(0xff79b4b7);
+Color get myPrimaryColor => Color(0xff86C6F4);
 
 Color get mySecondaryColor => Color(0xfffefbf3);
 

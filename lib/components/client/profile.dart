@@ -95,6 +95,7 @@ class _ProfileState extends State<Profile> {
       body: FutureBuilder(
           future: _getUserProfile(context, widget.uidWithCityCountry),
           builder: (context, AsyncSnapshot snapshot) {
+            print(snapshot.data.toString());
             if (!snapshot.hasError && snapshot.data != null) {
               var info = snapshot.data['info'];
               var worker_rating = snapshot.data['worker_rating'];

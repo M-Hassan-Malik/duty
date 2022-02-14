@@ -54,12 +54,12 @@ Container getClientCard(BuildContext context, dynamic userData) {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
       ),
-      backgroundColor: mySecondaryColor,
+      backgroundColor: Colors.red,
     );
     return TextButton(
       style: flatButtonStyle,
       onPressed: () => MapsLauncher.launchCoordinates(userData['place']['lat'], userData['place']['lng']),
-      child: Text('Visit Location', style: TextStyle(color: myPrimaryColor)),
+      child: Text('Visit Location', style: TextStyle(color: mySecondaryColor, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -114,7 +114,7 @@ Container getClientCard(BuildContext context, dynamic userData) {
                   Text(
                     userData['title'],
                     textAlign: TextAlign.left,
-                    style: TextStyle(color: myPrimaryColor, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                   )
                 ])
               ],
@@ -153,7 +153,7 @@ Container getClientCard(BuildContext context, dynamic userData) {
                     width: MediaQuery.of(context).size.width * 0.35,
                     child: Text(
                       userData['address'],
-                      style: TextStyle(color: myPrimaryColor, fontSize: 10),
+                      style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.visible,
                       textAlign: TextAlign.left,
                     ),
@@ -173,7 +173,7 @@ Container getClientCard(BuildContext context, dynamic userData) {
           children: <Widget>[
             Text(
               "Due",
-              style: TextStyle(color: myPrimaryColor, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             Text(

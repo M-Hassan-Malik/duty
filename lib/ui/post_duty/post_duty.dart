@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duty/provider/stepper/StepperProvider_main.dart';
 import 'package:duty/theme.dart';
 import 'package:duty/ui/post_duty/step_1.dart';
 import 'package:duty/ui/post_duty/step_2.dart';
 import 'package:duty/ui/post_duty/step_3.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,21 +16,9 @@ class PostingDuty extends StatelessWidget {
     int activeStep = Provider.of<StepperProviderContinuity>(context, listen: true).currentStep;
 
     final List<Step> mySteps = [
-      Step(
-          title: const Text("Task Details"),
-          isActive: activeStep == 0 ? true : false,
-          state: StepState.indexed,
-          content: StepForm(name: name)),
-      Step(
-          title: const Text("Task Location"),
-          isActive: activeStep == 1 ? true : false,
-          state: StepState.indexed,
-          content: LocationAndTime()),
-      Step(
-          title: const Text("Task Standards"),
-          isActive: activeStep == 2 ? true : false,
-          state: StepState.indexed,
-          content: StepperProviderBilling())
+      Step(title: const Text("Task Details"), isActive: activeStep == 0 ? true : false, state: StepState.indexed, content: StepForm(name: name)),
+      Step(title: const Text("Task Location"), isActive: activeStep == 1 ? true : false, state: StepState.indexed, content: LocationAndTime()),
+      Step(title: const Text("Task Standards"), isActive: activeStep == 2 ? true : false, state: StepState.indexed, content: StepperProviderBilling())
     ];
 
     return WillPopScope(
@@ -71,7 +57,13 @@ class PostingDuty extends StatelessWidget {
                                   }
                                 : null,
                             onStepCancel: value.cancel,
-                            onStepTapped: (step) => value.goTo(step)),
+                            onStepTapped: (step) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text("Complete current step, before proceeding."),
+                                  duration: const Duration(seconds: 2),
+                                  backgroundColor: Colors.red,
+                                ))
+                            //    onStepTapped: (step) => value.goTo(step)
+                            ),
                       ),
                     ),
                   ],

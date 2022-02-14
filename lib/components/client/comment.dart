@@ -22,6 +22,7 @@ class _CommentState extends State<Comment> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.details.toString());
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -52,8 +53,8 @@ class _CommentState extends State<Comment> {
                             "parent": true,
                             "userId": widget.details['uid'],
                             "dutyId": widget.details['docId'],
-                            "country": widget.details['country'],
-                            "city": widget.details['city'],
+                            "country": widget.details['doc']['country'],
+                            "city": widget.details['doc']['city'],
                             "comment": value,
                           };
                         return null;
@@ -65,7 +66,7 @@ class _CommentState extends State<Comment> {
                       icon: Icon(Icons.send, color: myPrimaryColor),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          _makeComment(context, _inputComment, widget.details['docId'])
+                          _makeComment(context, _inputComment)
                               .then((boolean) => boolean ? _formKey.currentState!.reset() : "");
                         }
                       },
@@ -78,7 +79,10 @@ class _CommentState extends State<Comment> {
               ),
               Container(
                 child: FutureBuilder(
-                    future: _getComments(context, widget.details['docId']),
+                    future: _getComments(context, {'parentDocId': widget.details['docId'],
+                      "country": widget.details['doc']['country'],
+                      "city": widget.details['doc']['city'],
+                    }),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (!snapshot.hasError && snapshot.data != null) {
                         _comments = snapshot.data;
@@ -105,8 +109,8 @@ class _CommentState extends State<Comment> {
                                               dutyId: widget.details['docId'],
                                               replies: _comments[i]['reply'],
                                               comment: _comments[i]['docData'],
-                                              country: widget.details['country'],
-                                              city: widget.details['city'],
+                                              country: widget.details['doc']['country'],
+                                              city: widget.details['doc']['city'],
                                               parentId: _comments[i]['docId']))),
                                 );
                               }),
@@ -217,7 +221,7 @@ class _CommentAreaState extends State<CommentArea> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            _makeComment(context, _inputCommentReply, widget.dutyId).then((boolean) => boolean
+                            _makeComment(context, _inputCommentReply).then((boolean) => boolean
                                 ? {
                                     _formKey.currentState!.reset(),
                                     setState(() {
@@ -248,20 +252,24 @@ Widget _replyMaker(BuildContext context, List replies) {
       });
 }
 
-Future<bool> _makeComment(BuildContext context, Map<String, dynamic> _body, dynamic dutyId) async {
+Future<bool> _makeComment(BuildContext context, Map<String, dynamic> body) async {
   Map<String, dynamic> jsonResponse = new Map<String, dynamic>();
   final response = await http.post(
     Uri.parse('$API_URL/duty/addComment'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
-    body: convert.jsonEncode(_body),
+    body: convert.jsonEncode(body),
   );
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Publishing comment...")));
   if (response.statusCode == 200) {
     jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Comment made")));
-    _getComments(context, dutyId);
+    _getComments(context, {
+      'parentDocId' : body['dutyId'],
+      'city' : body['city'],
+      'country' : body['country'],
+    });
     return true;
   } else if (response.statusCode == 400) {
     jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
@@ -273,10 +281,15 @@ Future<bool> _makeComment(BuildContext context, Map<String, dynamic> _body, dyna
   }
 }
 
-Future _getComments(BuildContext context, dynamic dutyId) async {
+Future _getComments(BuildContext context, dynamic dutyDetails, ) async {
   Map<String, dynamic> jsonResponse = new Map<String, dynamic>();
   try {
-    final response = await http.get(Uri.parse('$API_URL/duty/getComments/$dutyId'));
+    final response = await http.post(Uri.parse('$API_URL/duty/getComments'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: convert.jsonEncode(dutyDetails),
+    );
     if (response.statusCode == 200) {
       jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
       return jsonResponse['result'];
